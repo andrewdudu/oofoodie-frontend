@@ -1,64 +1,43 @@
 <template>
-  <div class="footer">
-    <div class="list-icon">
-      <md-icon class="md-size-2x icon">home</md-icon>
-      <span class="icon-description">Home</span>
-    </div>
-    <div class="list-icon">
-      <md-icon class="md-size-2x icon">add_circle</md-icon>
-      <span class="icon-description">Suggest New</span>
-    </div>
-    <div class="list-icon">
-      <md-icon class="md-size-2x icon">location_on</md-icon>
-      <span class="icon-description">Nearby</span>
-    </div>
-    <div class="list-icon">
-      <md-icon class="md-size-2x icon">search</md-icon>
-      <span class="icon-description">Explore</span>
-    </div>
-    <div class="list-icon">
-      <md-icon class="md-size-2x icon">account_circle</md-icon>
-      <span class="icon-description">Profile</span>
-    </div>
-  </div>
+      <md-bottom-bar class="footer phone-viewport" md-sync-route>
+        <md-bottom-bar-item to="/" exact md-label="Home" md-icon="home"></md-bottom-bar-item>
+        <md-bottom-bar-item to="/new" md-label="Suggest New" md-icon="add_circle"></md-bottom-bar-item>
+        <md-bottom-bar-item to="/nearby" md-label="Nearby" md-icon="location_on"></md-bottom-bar-item>
+        <md-bottom-bar-item to="/explore" md-label="Explore" md-icon="search"></md-bottom-bar-item>
+        <md-bottom-bar-item to="/profile" md-label="Profile" md-icon="account_circle"></md-bottom-bar-item>
+      </md-bottom-bar>
 </template>
 
 <script>
-export default {
-  name: "Footer"
-};
+  export default {
+    name: 'BarRouter'
+  }
 </script>
 
 <style lang="scss" scoped>
 $icon_color: #204732;
-
-.list-icon {
-  width: 48px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-family: "Century Gothic";
-}
-
-.icon-description {
-  white-space: nowrap;
-}
-
-.icon {
-  margin: 0;
-  color: $icon_color;
-  text-shadow: 1px 1px 2px $icon_color;
-}
+$active_icon_color: #339162;
 
 .footer {
-  position: absolute;
-  display: flex;
-  justify-content: space-evenly;
-  bottom: 0;
-  left: 0;
-  height: 80px;
-  width: 100%;
-  box-shadow: 0px -1px 3px #d5d1ca;
+    position: fixed;
+    bottom: 0;
+    left: 0;
 }
+
+.md-bottom-bar-item {
+    color: $icon_color;
+    text-shadow: 0px 0px 0px $icon_color;
+}
+
+.md-active {
+    color: $active_icon_color;
+}
+
+.phone-viewport {
+    width: 100%;
+    display: inline-flex;
+    align-items: flex-end;
+    overflow: hidden;
+    box-shadow: 0px -1px 3px #d5d1ca;
+  }
 </style>

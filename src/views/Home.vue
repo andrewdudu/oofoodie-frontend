@@ -1,9 +1,9 @@
 <template>
-  <div class="md-layout home">
+  <div class="home">
     <div class="search-input">
       <div class="search-div">
         <input class="search" placeholder="Type here to Search Restaurant" />
-        <md-icon>search</md-icon>
+        <v-icon>search</v-icon>
       </div>
     </div>
     <span class="voucher-title">Vouchers</span>
@@ -12,22 +12,77 @@
         <img src="../assets/voucher.jpg" />
       </slide>
       <slide>
-        <img src="../assets/voucher2.png" />
+        <img src="../assets/voucher.jpg" />
       </slide>
-      <hooper-pagination slot="hooper-addons"></hooper-pagination>
+      <hooper-pagination slot="hooper-addons"/>
     </hooper>
+    <span class="voucher-title">Vouchers</span>
+    <div class="horizontal-scroll">
+      <div v-bind:key="index" v-for="(data, index) in datas">
+        <card :class="index === 0 ? '' : 'margin-left'" v-bind:data="data"></card>
+      </div>
+    </div>
+    <span class="voucher-title">Vouchers</span>
+    <div class="horizontal-scroll">
+      <div v-bind:key="index" v-for="(data, index) in datas">
+        <card :class="index === 0 ? '' : 'margin-left'" v-bind:data="data"></card>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { Hooper, Slide, Pagination as HooperPagination } from "hooper";
+import Card from "@/components/Card.vue";
 import "hooper/dist/hooper.css";
 
 export default {
   components: {
     Hooper,
     Slide,
-    HooperPagination
+    HooperPagination,
+    Card
+  },
+  data() {
+    return {
+      datas: [
+        {
+          img:
+            "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
+          title: "The Magic of Nolem Gur The Magic of Nolem Gur",
+          rating: 4.9,
+          likes: 21
+        },
+        {
+          img:
+            "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
+          title: "The Magic of Nolem Gur",
+          rating: 4.9,
+          likes: 21
+        },
+        {
+          img:
+            "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
+          title: "The Magic of Nolem Gur",
+          rating: 4.9,
+          likes: 21
+        },
+        {
+          img:
+            "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
+          title: "The Magic of Nolem Gur",
+          rating: 4.9,
+          likes: 21
+        },
+        {
+          img:
+            "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
+          title: "The Magic of Nolem Gur",
+          rating: 4.9,
+          likes: 21
+        }
+      ]
+    };
   }
 };
 </script>
@@ -36,10 +91,73 @@ export default {
 $font: "Century Gothic";
 $title_size: 12px;
 
+.margin-left {
+  margin-left: 10px;
+}
+
+.horizontal-scroll {
+  padding: 3px 15px 0 15px;
+  display: flex;
+  overflow-x: auto;
+  min-width: 100%;
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.star-rating {
+  margin-left: 2px;
+}
+
+.star-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #41e296;
+  width: 50px;
+  height: 25px;
+  border-radius: 6px;
+  font-family: $font;
+  font-weight: bold;
+  color: white;
+}
+
 .home {
-  height: 100vh;
   display: flex;
   flex-direction: column;
+  margin-bottom: 70px;
+}
+
+.v-card__text {
+  padding-top: 7px;
+}
+
+.col {
+  padding: 0px;
+  font-family: $font;
+}
+
+.card-description {
+  font-family: $font;
+  text-align: left;
+  padding-left: 3px;
+}
+
+.card-title {
+  font-weight: bold;
+  text-align: left;
+  padding-left: 3px;
+}
+
+img {
+  border-radius: 5px;
+}
+
+.v-card {
+  margin-bottom: 3px;
+  min-width: 250px;
+  max-width: 250px;
 }
 
 .hooper {
@@ -65,18 +183,16 @@ $title_size: 12px;
   min-height: 10rem;
 }
 
-.search-bar {
-  width: 30%;
-}
-
 .search-input {
   display: flex;
   justify-content: center;
-  background-image: url("../assets/home.jpg");
-  background-size: 100% auto;
-  background-repeat: no-repeat;
-  padding-top: 13vh;
-  height: 30%;
+  align-items: center;
+  background: url("../assets/home.jpg") no-repeat center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  min-height: 250px;
   width: 100%;
 }
 

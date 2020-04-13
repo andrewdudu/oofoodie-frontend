@@ -85,5 +85,6 @@ $title_size: 12px;
 
 img {
   border-radius: 5px;
+  width: 100%;
 }
 </style>

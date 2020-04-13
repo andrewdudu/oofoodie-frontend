@@ -16,16 +16,16 @@
       </slide>
       <hooper-pagination slot="hooper-addons"/>
     </hooper>
-    <span class="voucher-title">Vouchers</span>
+    <span class="voucher-title">Popular Restaurants</span>
     <div class="horizontal-scroll">
       <div v-bind:key="index" v-for="(data, index) in datas">
-        <card :class="index === 0 ? '' : 'margin-left'" v-bind:data="data"></card>
+        <card :class="index === 0 ? '' : 'margin-left'" v-bind:data="data" />
       </div>
     </div>
-    <span class="voucher-title">Vouchers</span>
+    <span class="voucher-title">Nearby Restaurants</span>
     <div class="horizontal-scroll">
       <div v-bind:key="index" v-for="(data, index) in datas">
-        <card :class="index === 0 ? '' : 'margin-left'" v-bind:data="data"></card>
+        <card :class="index === 0 ? '' : 'margin-left'" v-bind:data="data" />
       </div>
     </div>
   </div>
@@ -100,6 +100,7 @@ $title_size: 12px;
   display: flex;
   overflow-x: auto;
   min-width: 100%;
+  -ms-overflow-style: none;
 }
 
 .horizontal-scroll::-webkit-scrollbar {
@@ -203,7 +204,6 @@ img {
 .search {
   font-family: $font;
   border: none;
-  border-color: transparent;
   width: 90%;
   outline: none;
 }

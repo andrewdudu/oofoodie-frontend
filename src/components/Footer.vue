@@ -1,43 +1,55 @@
 <template>
-      <md-bottom-bar class="footer phone-viewport" md-sync-route>
-        <md-bottom-bar-item to="/" exact md-label="Home" md-icon="home"></md-bottom-bar-item>
-        <md-bottom-bar-item to="/new" md-label="Suggest New" md-icon="add_circle"></md-bottom-bar-item>
-        <md-bottom-bar-item to="/nearby" md-label="Nearby" md-icon="location_on"></md-bottom-bar-item>
-        <md-bottom-bar-item to="/explore" md-label="Explore" md-icon="search"></md-bottom-bar-item>
-        <md-bottom-bar-item to="/profile" md-label="Profile" md-icon="account_circle"></md-bottom-bar-item>
-      </md-bottom-bar>
+  <v-bottom-navigation
+    :value="activeBtn"
+    color="purple lighten-1"
+    class="footer"
+  >
+    <v-btn to="/">
+      <span>Home</span>
+      <v-icon>home</v-icon>
+    </v-btn>
+
+    <v-btn to="/suggest">
+      <span>Suggest New</span>
+      <v-icon>add_circle</v-icon>
+    </v-btn>
+
+    <v-btn to="/nearby">
+      <span>Nearby</span>
+      <v-icon>location_on</v-icon>
+    </v-btn>
+
+    <v-btn to="/explore">
+      <span>Explore</span>
+      <v-icon>search</v-icon>
+    </v-btn>
+
+    <v-btn to="/profile">
+      <span>Profile</span>
+      <v-icon>account_circle</v-icon>
+    </v-btn>
+  </v-bottom-navigation>
 </template>
 
 <script>
-  export default {
-    name: 'BarRouter'
-  }
+export default {
+  name: "BarRouter"
+};
 </script>
 
 <style lang="scss" scoped>
-$icon_color: #204732;
 $active_icon_color: #339162;
 
 .footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
+  position: fixed;
+  background-color: white;
+  z-index: 1;
+  bottom: 0;
+  left: 0;
 }
 
-.md-bottom-bar-item {
-    color: $icon_color;
-    text-shadow: 0px 0px 0px $icon_color;
+.v-btn--active {
+  color: $active_icon_color !important;
+  text-decoration: none !important;
 }
-
-.md-active {
-    color: $active_icon_color;
-}
-
-.phone-viewport {
-    width: 100%;
-    display: inline-flex;
-    align-items: flex-end;
-    overflow: hidden;
-    box-shadow: 0px -1px 3px #d5d1ca;
-  }
 </style>

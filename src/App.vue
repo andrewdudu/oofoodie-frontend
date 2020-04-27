@@ -1,13 +1,9 @@
 <template>
-  <div id="app">
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
+  <v-app id="app">
     <Header />
     <router-view />
     <Footer />
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -18,8 +14,8 @@ import Footer from "@/components/Footer.vue";
 export default {
   components: {
     Header,
-    Footer
-  }
+    Footer,
+  },
 };
 </script>
 

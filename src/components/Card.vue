@@ -5,7 +5,7 @@
     </v-img>
 
     <v-card-text class="text--primary">
-      <v-row class="mb-6">
+      <v-row style="margin-bottom: 0px !important">
         <v-col cols="10" class="card-title">{{ data.title }}</v-col>
         <v-col align="center" cols="2">
           <div class="star-box">
@@ -27,7 +27,7 @@ export default {
   props: ["data"],
   data() {
     return this.data;
-  }
+  },
 };
 </script>
 

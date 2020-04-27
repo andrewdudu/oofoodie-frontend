@@ -6,6 +6,7 @@
         <v-icon>search</v-icon>
       </div>
     </div>
+
     <span class="voucher-title">Vouchers</span>
     <hooper :infiniteScroll="true" :autoPlay="true" :playSpeed="3000">
       <slide>
@@ -14,8 +15,9 @@
       <slide>
         <img src="../assets/voucher.jpg" />
       </slide>
-      <hooper-pagination slot="hooper-addons"/>
+      <hooper-pagination slot="hooper-addons" />
     </hooper>
+
     <span class="voucher-title">Popular Restaurants</span>
     <div class="horizontal-scroll">
       <div v-bind:key="index" v-for="(data, index) in datas">
@@ -41,7 +43,7 @@ export default {
     Hooper,
     Slide,
     HooperPagination,
-    Card
+    Card,
   },
   data() {
     return {
@@ -51,39 +53,39 @@ export default {
             "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
           title: "The Magic of Nolem Gur The Magic of Nolem Gur",
           rating: 4.9,
-          likes: 21
+          likes: 21,
         },
         {
           img:
             "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
           title: "The Magic of Nolem Gur",
           rating: 4.9,
-          likes: 21
+          likes: 21,
         },
         {
           img:
             "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
           title: "The Magic of Nolem Gur",
           rating: 4.9,
-          likes: 21
+          likes: 21,
         },
         {
           img:
             "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
           title: "The Magic of Nolem Gur",
           rating: 4.9,
-          likes: 21
+          likes: 21,
         },
         {
           img:
             "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
           title: "The Magic of Nolem Gur",
           rating: 4.9,
-          likes: 21
-        }
-      ]
+          likes: 21,
+        },
+      ],
     };
-  }
+  },
 };
 </script>
 

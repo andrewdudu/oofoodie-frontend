@@ -8,8 +8,8 @@
 export default {
   name: "Header",
   props: {
-    msg: String
-  }
+    msg: String,
+  },
 };
 </script>
 
@@ -18,7 +18,6 @@ $max_height_logo: 10vw;
 $break_small: 620px;
 
 .header-component {
-  box-shadow: 0px 1px 5px #d5d1ca;
   padding: 10px;
   width: 100%;
   @media screen and (max-width: $break_small) {

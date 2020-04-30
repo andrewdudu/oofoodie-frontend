@@ -1,6 +1,8 @@
 <template>
   <v-app id="app">
     <Header />
+    <Loading />
+    <Snackbar />
     <router-view />
     <Footer />
   </v-app>
@@ -10,12 +12,16 @@
 // @ is an alias to /src
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
+import Loading from "@/components/Loading.vue";
+import Snackbar from "@/components/Snackbar.vue";
 
 export default {
   components: {
     Header,
     Footer,
-  },
+    Loading,
+    Snackbar
+  }
 };
 </script>
 

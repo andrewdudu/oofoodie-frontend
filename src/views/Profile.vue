@@ -129,6 +129,8 @@
 </template>
 
 <script>
+import router from "@/router.js";
+
 export default {
   data() {
     return {
@@ -182,6 +184,7 @@ export default {
 
         this.setLoading("Login...", false);
         this.showSnackbar("Login Successfully.", "success");
+        router.push("/");
       } catch (err) {
         this.setLoading("Login...", false);
         this.showSnackbar("Incorrect username or password.", "error");

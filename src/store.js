@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import axios from "./axios";
 
 Vue.use(Vuex);
 
@@ -10,6 +11,7 @@ export default new Vuex.Store({
       isShown: false,
     },
     snackbar: null,
+    isAuthenticated: false,
   },
   mutations: {
     setLoading(state, value) {
@@ -17,6 +19,9 @@ export default new Vuex.Store({
     },
     setSnackbar(state, value) {
       state.snackbar = value;
+    },
+    setAuthenticated(state, value) {
+      state.isAuthenticated = value;
     },
   },
   actions: {
@@ -26,6 +31,19 @@ export default new Vuex.Store({
     setSnackbar({ commit }, snackbar) {
       commit("setSnackbar", snackbar);
     },
+    setAuthenticated({ commit }, isAuthenticated) {
+      commit("setAuthenticated", isAuthenticated);
+    },
+    getAuthenticated({ commit }) {
+      axios
+        .post("/auth/refresh")
+        .then((res) => {
+          commit("setAuthenticated", true);
+        })
+        .catch((err) => {
+          commit("setAuthenticated", false);
+        });
+    },
   },
   getters: {
     loading(state) {
@@ -33,6 +51,9 @@ export default new Vuex.Store({
     },
     snackbar(state) {
       return state.snackbar;
+    },
+    isAuthenticated(state) {
+      return state.isAuthenticated;
     },
   },
 });

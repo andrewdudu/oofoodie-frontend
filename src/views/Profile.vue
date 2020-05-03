@@ -45,10 +45,10 @@
     >
       <v-tabs-slider></v-tabs-slider>
 
-      <v-tab v-if="!isLoggedIn" href="#signin">Signin</v-tab>
-      <v-tab v-if="!isLoggedIn" href="#signup">Signup</v-tab>
-      <v-tab v-if="isLoggedIn" href="#timeline">Timeline</v-tab>
-      <v-tab v-if="isLoggedIn" href="#orders">Orders</v-tab>
+      <v-tab v-if="!isAuthenticated" href="#signin">Signin</v-tab>
+      <v-tab v-if="!isAuthenticated" href="#signup">Signup</v-tab>
+      <v-tab v-if="isAuthenticated" href="#timeline">Timeline</v-tab>
+      <v-tab v-if="isAuthenticated" href="#orders">Orders</v-tab>
 
       <v-tab-item value="signin">
         <v-form class="form" v-model="isLoginFormValid">
@@ -130,12 +130,13 @@
 
 <script>
 import router from "@/router.js";
+import store from "@/store.js";
+import { mapGetters } from "vuex";
 
 export default {
   data() {
     return {
       dialog: false,
-      isLoggedIn: false,
       isLoginFormValid: false,
       isSignupFormValid: false,
       rating: 3,
@@ -159,15 +160,18 @@ export default {
       password: ""
     };
   },
+  computed: {
+    ...mapGetters(["isAuthenticated"])
+  },
   methods: {
     setLoading(message, isShown) {
-      this.$store.dispatch("setLoading", {
+      store.dispatch("setLoading", {
         message,
         isShown
       });
     },
     showSnackbar(message, color) {
-      this.$store.dispatch("setSnackbar", {
+      store.dispatch("setSnackbar", {
         message,
         isShown: true,
         color
@@ -184,6 +188,7 @@ export default {
 
         this.setLoading("Login...", false);
         this.showSnackbar("Login Successfully.", "success");
+        store.dispatch("setAuthenticated", isAuthenticated);
         router.push("/");
       } catch (err) {
         this.setLoading("Login...", false);

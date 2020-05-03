@@ -14,6 +14,7 @@ import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import Loading from "@/components/Loading.vue";
 import Snackbar from "@/components/Snackbar.vue";
+import { mapActions } from "vuex";
 
 export default {
   components: {
@@ -21,6 +22,12 @@ export default {
     Footer,
     Loading,
     Snackbar
+  },
+  created() {
+    this.getAuthenticated();
+  },
+  methods: {
+    ...mapActions(["getAuthenticated"])
   }
 };
 </script>

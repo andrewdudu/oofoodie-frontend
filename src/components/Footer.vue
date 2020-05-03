@@ -1,9 +1,5 @@
 <template>
-  <v-bottom-navigation
-    :value="activeBtn"
-    color="purple lighten-1"
-    class="footer"
-  >
+  <v-bottom-navigation :value="activeBtn" color="purple lighten-1" class="footer">
     <v-btn to="/">
       <span>Home</span>
       <v-icon>home</v-icon>
@@ -43,7 +39,7 @@ $active_icon_color: #339162;
 .footer {
   position: fixed;
   background-color: white;
-  z-index: 1;
+  z-index: 1000;
   bottom: 0;
   left: 0;
 }

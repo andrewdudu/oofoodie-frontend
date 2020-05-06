@@ -1,24 +1,33 @@
 <template>
-  <div id="app">
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
+  <v-app id="app">
     <Header />
+    <Loading />
+    <Snackbar />
     <router-view />
     <Footer />
-  </div>
+  </v-app>
 </template>
 
 <script>
 // @ is an alias to /src
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
+import Loading from "@/components/Loading.vue";
+import Snackbar from "@/components/Snackbar.vue";
+import { mapActions } from "vuex";
 
 export default {
   components: {
     Header,
-    Footer
+    Footer,
+    Loading,
+    Snackbar
+  },
+  created() {
+    this.getAuthenticated();
+  },
+  methods: {
+    ...mapActions(["getAuthenticated"])
   }
 };
 </script>

@@ -53,7 +53,12 @@
       <v-tab-item value="signin">
         <v-form class="form" v-model="isLoginFormValid">
           <v-row>
-            <v-text-field v-model="usernameLogin" :rules="usernameRules" label="Username" required></v-text-field>
+            <v-text-field
+              v-model="usernameLogin"
+              :rules="usernameRules"
+              label="Username"
+              required
+            ></v-text-field>
           </v-row>
           <v-row>
             <v-text-field
@@ -72,10 +77,17 @@
                 :disabled="!isLoginFormValid"
                 class="white--text"
                 @click="onLoginClicked"
-              >Login</v-btn>
+                >Login</v-btn
+              >
             </div>
             <div class="my-2 forgot-password-btn">
-              <v-btn class="forgot-password-text" text small>Forgot Password</v-btn>
+              <v-btn
+                class="forgot-password-text"
+                to="/forgot-password"
+                text
+                small
+                >Forgot Password</v-btn
+              >
             </div>
           </v-row>
         </v-form>
@@ -83,13 +95,28 @@
       <v-tab-item value="signup">
         <v-form class="form" v-model="isSignupFormValid">
           <v-row>
-            <v-text-field v-model="username" :rules="usernameRules" label="Username" required></v-text-field>
+            <v-text-field
+              v-model="username"
+              :rules="usernameRules"
+              label="Username"
+              required
+            ></v-text-field>
           </v-row>
           <v-row>
-            <v-text-field v-model="email" :rules="emailRules" label="Email" required></v-text-field>
+            <v-text-field
+              v-model="email"
+              :rules="emailRules"
+              label="Email"
+              required
+            ></v-text-field>
           </v-row>
           <v-row>
-            <v-text-field v-model="name" :rules="nameRules" label="Name" required></v-text-field>
+            <v-text-field
+              v-model="name"
+              :rules="nameRules"
+              label="Name"
+              required
+            ></v-text-field>
           </v-row>
           <v-row>
             <v-text-field
@@ -117,7 +144,8 @@
                 class="white--text"
                 :disabled="!isSignupFormValid"
                 @click="onSignupClicked"
-              >Signup</v-btn>
+                >Signup</v-btn
+              >
             </div>
           </v-row>
         </v-form>
@@ -140,41 +168,41 @@ export default {
       isLoginFormValid: false,
       isSignupFormValid: false,
       rating: 3,
-      usernameRules: [v => !!v || "Username is required"],
+      usernameRules: [(v) => !!v || "Username is required"],
       emailRules: [
-        v => !!v || "E-mail is required",
-        v => /.+@.+\..+/.test(v) || "E-mail must be valid"
+        (v) => !!v || "E-mail is required",
+        (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
       ],
       confirmPasswordRules: [
-        v => !!v || "Confirm Password is required",
-        v => v === this.password || "Password must be the same"
+        (v) => !!v || "Confirm Password is required",
+        (v) => v === this.password || "Password must be the same",
       ],
-      nameRules: [v => !!v || "Name is required"],
-      passwordRules: [v => !!v || "Password is required"],
+      nameRules: [(v) => !!v || "Name is required"],
+      passwordRules: [(v) => !!v || "Password is required"],
       username: "",
       usernameLogin: "",
       passwordLogin: "",
       email: "",
       name: "",
       confirmPassword: "",
-      password: ""
+      password: "",
     };
   },
   computed: {
-    ...mapGetters(["isAuthenticated"])
+    ...mapGetters(["isAuthenticated"]),
   },
   methods: {
     setLoading(message, isShown) {
       store.dispatch("setLoading", {
         message,
-        isShown
+        isShown,
       });
     },
     showSnackbar(message, color) {
       store.dispatch("setSnackbar", {
         message,
         isShown: true,
-        color
+        color,
       });
     },
     async onLoginClicked() {
@@ -183,12 +211,12 @@ export default {
 
         await this.$http.post("/auth/login", {
           username: this.usernameLogin,
-          password: this.passwordLogin
+          password: this.passwordLogin,
         });
 
         this.setLoading("Login...", false);
         this.showSnackbar("Login Successfully.", "success");
-        store.dispatch("setAuthenticated", isAuthenticated);
+        store.dispatch("setAuthenticated", true);
         router.push("/");
       } catch (err) {
         this.setLoading("Login...", false);
@@ -203,7 +231,7 @@ export default {
           username: this.username,
           name: this.name,
           password: this.password,
-          email: this.email
+          email: this.email,
         });
 
         this.setLoading("Signing up...", false);
@@ -212,8 +240,8 @@ export default {
         this.setLoading("Signing up...", false);
         this.showSnackbar("Please fill the form correctly.", "error");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

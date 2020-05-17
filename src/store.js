@@ -12,6 +12,7 @@ export default new Vuex.Store({
     },
     snackbar: null,
     isAuthenticated: false,
+    authenticatedUser: null,
   },
   mutations: {
     setLoading(state, value) {
@@ -22,6 +23,10 @@ export default new Vuex.Store({
     },
     setAuthenticated(state, value) {
       state.isAuthenticated = value;
+    },
+    setAuthenticatedUser(state, value) {
+      console.log(value);
+      state.authenticatedUser = value;
     },
   },
   actions: {
@@ -37,10 +42,11 @@ export default new Vuex.Store({
     getAuthenticated({ commit }) {
       axios
         .post("/auth/refresh")
-        .then((res) => {
+        .then((response) => {
           commit("setAuthenticated", true);
+          commit("setAuthenticatedUser", response.data.user);
         })
-        .catch((err) => {
+        .catch(() => {
           commit("setAuthenticated", false);
         });
     },

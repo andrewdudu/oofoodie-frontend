@@ -1,5 +1,4 @@
 import axios from "axios";
-import router from "./router.js";
 
 const ajax = axios.create({
   withCredentials: true,
@@ -19,8 +18,6 @@ ajax.interceptors.response.use(
 
     // if it is already refreshed but still 401, then ignore and redirect to login page
     if (error.config.url === "/auth/refresh") {
-      router.push("/login");
-
       return new Promise((_resolve, reject) => {
         reject(error);
       });
@@ -29,8 +26,9 @@ ajax.interceptors.response.use(
     return new Promise((resolve, reject) => {
       axios
         .post("/auth/refresh")
-        .then(() => {
+        .then((response) => {
           // TODO: store isAuth
+          console.log(response);
           // re-request previous request after refreshed
           return axios.request(error.config);
         })

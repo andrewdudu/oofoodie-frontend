@@ -39,6 +39,9 @@ export default new Vuex.Store({
     setAuthenticated({ commit }, isAuthenticated) {
       commit("setAuthenticated", isAuthenticated);
     },
+    setAuthenticatedUser({ commit }, user) {
+      commit("setAuthenticatedUser", user);
+    },
     getAuthenticated({ commit }) {
       axios
         .post("/auth/refresh")
@@ -48,6 +51,7 @@ export default new Vuex.Store({
         })
         .catch(() => {
           commit("setAuthenticated", false);
+          commit("setAuthenticatedUser", null);
         });
     },
   },
@@ -60,6 +64,9 @@ export default new Vuex.Store({
     },
     isAuthenticated(state) {
       return state.isAuthenticated;
+    },
+    authenticatedUser(state) {
+      return state.authenticatedUser;
     },
   },
 });

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Map v-bind:markers="markers" v-bind:circle="circle" v-bind:isAddMarker="isAddMarker" />
+    <Map v-bind:markers="markers" v-bind:circle="circle" />
   </div>
 </template>
 

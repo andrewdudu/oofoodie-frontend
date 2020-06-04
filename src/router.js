@@ -33,5 +33,13 @@ export default new Router({
       name: "reset-password",
       component: () => import("./views/ResetPassword.vue"),
     },
+    {
+      path: "/suggest",
+      component: () => import("./views/SuggestRestaurant/SuggestMap.vue"),
+    },
+    {
+      path: "/suggest/form",
+      component: () => import("./views/SuggestRestaurant/SuggestForm.vue"),
+    },
   ],
 });

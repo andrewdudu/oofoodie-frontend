@@ -1,4 +1,5 @@
 import axios from "axios";
+import router from "@/router.js";
 
 const ajax = axios.create({
   withCredentials: true,
@@ -28,7 +29,6 @@ ajax.interceptors.response.use(
         .post("/auth/refresh")
         .then((response) => {
           // TODO: store isAuth
-          console.log(response);
           // re-request previous request after refreshed
           return axios.request(error.config);
         })
@@ -36,6 +36,7 @@ ajax.interceptors.response.use(
           resolve(response);
         })
         .catch((err) => {
+          router.push("/profile");
           reject(err);
         });
     });

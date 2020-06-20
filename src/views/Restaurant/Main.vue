@@ -20,7 +20,12 @@
                 </div>
               </v-col>
               <v-col cols="12" md="6">
-                <v-textarea name="input-7-1" label="Comment" hint="Leave a comment here."></v-textarea>
+                <v-textarea
+                  v-model="comment"
+                  name="input-7-1"
+                  label="Comment"
+                  hint="Leave a comment here."
+                ></v-textarea>
               </v-col>
             </v-row>
           </v-container>
@@ -28,7 +33,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
-          <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
+          <v-btn color="blue darken-1" text @click="onReviewSubmit">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -279,17 +284,12 @@
 
       <v-divider class="divider" style="margin-bottom: 10px; margin-top: 15px" />
 
-      <div>
+      <div v-for="review in reviews" :key="review.reviewId">
         <v-row>
           <v-col cols="8">
             <v-row>
               <v-col cols="12" style="text-align: left;">
-                <span class="medium-text" style="font-weight: bold;">Andrew Wijaya</span>
-              </v-col>
-            </v-row>
-            <v-row style="margin-top: -5px;">
-              <v-col cols="12" style="text-align: left;">
-                <span class="small-text" style="font-weight: bold;">103 likes</span>
+                <span class="medium-text" style="font-weight: bold;">{{ review.user }}</span>
               </v-col>
             </v-row>
           </v-col>
@@ -300,7 +300,7 @@
               </v-col>
               <v-col cols="6" style="padding: 0">
                 <span>
-                  <star-box v-bind:star="5"></star-box>
+                  <star-box v-bind:star="review.star"></star-box>
                 </span>
               </v-col>
             </v-row>
@@ -311,9 +311,7 @@
             cols="12"
             style="text-align: justify; line-height: normal; padding-left: 15px; padding-right: 15px"
           >
-            <span
-              class="small-text"
-            >Excellent food and very friendly staff! The chocolate peanut butter cake is fantastic. I tried the salmon futtucini and it was on point! Will definitely come back again!!</span>
+            <span class="small-text">{{ review.comment }}</span>
           </v-col>
         </v-row>
 
@@ -329,6 +327,7 @@ import Map from "@/components/Map.vue";
 import ReviewStar from "@/components/ReviewStar.vue";
 import moment from "moment";
 import store from "@/store.js";
+import { mapGetters } from "vuex";
 
 export default {
   components: {
@@ -336,21 +335,30 @@ export default {
     Map,
     ReviewStar
   },
+
   data() {
     return {
       dialog: false,
       restaurant: null,
       marker: null,
       rating: 0,
+      comment: "",
+      reviews: [],
       today: moment()
         .isoWeekday(moment().day())
         .format("dddd")
         .toLowerCase()
     };
   },
+
   created() {
     this.initialize();
   },
+
+  computed: {
+    ...mapGetters(["authenticatedUser"])
+  },
+
   methods: {
     initialize() {
       this.$http.get(`/api/restaurant/${this.$route.params.id}`).then(res => {
@@ -358,6 +366,7 @@ export default {
         this.marker = [
           [res.data.data.location.lat, res.data.data.location.lon]
         ];
+        this.reviews = this.restaurant.reviews;
         console.log(this.restaurant);
       });
     },
@@ -383,6 +392,50 @@ export default {
       } else {
         store.dispatch("setSnackbar", {
           message: "Browser is not supported to share.",
+          isShown: true,
+          color: "error"
+        });
+      }
+    },
+    async onReviewSubmit() {
+      try {
+        this.dialog = false;
+        await this.$http.post(
+          `/api/user/restaurant/${this.$route.params.id}/review`,
+          {
+            star: this.rating,
+            comment: this.comment
+          }
+        );
+
+        let hasReviewed = false;
+        this.reviews.forEach(review => {
+          if (review.user === this.authenticatedUser.username) {
+            review.star = this.rating;
+            review.comment = this.comment;
+            hasReviewed = true;
+          }
+        });
+
+        if (!hasReviewed) {
+          let review = {
+            comment: this.comment,
+            star: this.rating,
+            restoId: this.$route.params.id,
+            user: this.authenticatedUser.username,
+            id: "temp-id"
+          };
+          this.review.push(review);
+        }
+
+        store.dispatch("setSnackbar", {
+          message: "Review submitted.",
+          isShown: true,
+          color: "success"
+        });
+      } catch (err) {
+        store.dispatch("setSnackbar", {
+          message: "Something went wrong, Please try again later.",
           isShown: true,
           color: "error"
         });

@@ -36,7 +36,7 @@ ajax.interceptors.response.use(
           resolve(response);
         })
         .catch((err) => {
-          if (err.response.status === "401") router.push("/profile");
+          if (err.response.status === 401) router.push("/profile");
           reject(err);
         });
     });

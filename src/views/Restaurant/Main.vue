@@ -97,8 +97,11 @@
         </v-col>
         <v-col cols="3">
           <div class="btn-icon-div">
-            <v-btn icon color="deep-orange">
-              <v-icon size="40" color="#838383">mdi-bookmark-check</v-icon>
+            <v-btn icon color="deep-orange" @click="onBeenThereBtnClicked">
+              <v-icon
+                size="40"
+                v-bind:color="hasBeenThere === -1 ? '#838383' : '#3AB87B'"
+              >mdi-bookmark-check</v-icon>
             </v-btn>
             <span class="medium-text">Been There</span>
           </div>
@@ -340,6 +343,7 @@ export default {
     return {
       dialog: false,
       isLiked: -1,
+      hasBeenThere: -1,
       likes: 0,
       restaurant: null,
       marker: null,
@@ -390,6 +394,11 @@ export default {
         if (this.restaurant.likes !== null) {
           this.likes = this.restaurant.likes.length;
           this.isLiked = this.restaurant.likes.indexOf(
+            this.authenticatedUser.username
+          );
+        }
+        if (this.restaurant.beenThere !== null) {
+          this.hasBeenThere = this.restaurant.beenThere.indexOf(
             this.authenticatedUser.username
           );
         }
@@ -462,6 +471,31 @@ export default {
         store.dispatch("setAuthenticatedUser", tempAuthenticatedUser);
         store.dispatch("setSnackbar", {
           message,
+          isShown: true,
+          color: "success"
+        });
+      } catch (err) {
+        store.dispatch("setSnackbar", {
+          message: "Something went wrong.",
+          isShown: true,
+          color: "error"
+        });
+      }
+    },
+    async onBeenThereBtnClicked() {
+      try {
+        await this.$http.post(
+          `/api/user/restaurant/been-there`,
+          {},
+          {
+            headers: {
+              "restaurant-id": this.$route.params.id
+            }
+          }
+        );
+
+        store.dispatch("setSnackbar", {
+          message: "Submitted.",
           isShown: true,
           color: "success"
         });

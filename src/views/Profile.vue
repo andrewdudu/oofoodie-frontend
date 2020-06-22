@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="authenticatedUser !== null">
     <v-row>
       <v-col cols="5">
         <v-row>
@@ -19,7 +19,7 @@
           <span
             v-if="isAuthenticated"
             class="review-description"
-          >{{ User.reviews.length }} Reviews - {{ averageRating }} avg rating</span>
+          >{{ reviewCount }} Review(s) - {{ averageRating }} avg rating</span>
         </v-row>
         <v-row>
           <v-rating
@@ -156,6 +156,7 @@ export default {
   data() {
     return {
       dialog: false,
+      reviewCount: 0,
       isLoginFormValid: false,
       isSignupFormValid: false,
       rating: 3,
@@ -232,13 +233,19 @@ export default {
     User() {
       if (this.authenticatedUser !== null) {
         let avgStar = 0;
-        this.authenticatedUser.reviews.forEach(review => {
-          avgStar += review.star;
-        });
-        this.averageRating = (
-          avgStar / this.authenticatedUser.reviews.length
-        ).toFixed(2);
+        if (this.authenticatedUser.timelines !== null) {
+          this.authenticatedUser.timelines.forEach(timeline => {
+            if (timeline.type === "review") {
+              avgStar += timeline.star;
+              this.reviewCount++;
+            }
+          });
+          this.averageRating = (
+            avgStar / this.authenticatedUser.timelines.length
+          ).toFixed(2);
+        }
       }
+      console.log(this.authenticatedUser);
       return this.authenticatedUser;
     }
   },
@@ -297,7 +304,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 $font: "Century Gothic";
 
 .row {

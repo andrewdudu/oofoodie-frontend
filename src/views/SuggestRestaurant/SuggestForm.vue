@@ -1,17 +1,7 @@
 <template>
   <v-form class="form" v-model="isFormValid">
-    <v-text-field
-      v-model="name"
-      :rules="nameRules"
-      label="Restaurant Name"
-      required
-    ></v-text-field>
-    <v-text-field
-      v-model="address"
-      :rules="addressRules"
-      label="Address"
-      required
-    ></v-text-field>
+    <v-text-field v-model="name" :rules="nameRules" label="Restaurant Name" required></v-text-field>
+    <v-text-field v-model="address" :rules="addressRules" label="Address" required></v-text-field>
     <v-select
       v-model="model"
       :items="restoType"
@@ -23,39 +13,17 @@
         <v-chip v-if="index === 0">
           <span>{{ item }}</span>
         </v-chip>
-        <span v-if="index === 1" class="grey--text caption"
-          >(+{{ model.length - 1 }} others)</span
-        >
+        <span v-if="index === 1" class="grey--text caption">(+{{ model.length - 1 }} others)</span>
       </template>
     </v-select>
-    <v-text-field
-      v-model="cuisine"
-      :rules="cuisineRules"
-      label="Cuisine"
-      required
-    ></v-text-field>
-    <v-text-field
-      v-model="telephoen"
-      :rules="telephoneRules"
-      label="Telephone"
-      required
-    ></v-text-field>
-    <v-file-input
-      accept="image/*"
-      label="Image"
-      :rules="imageRules"
-      @change="onImageChange"
-    ></v-file-input>
+    <v-text-field v-model="cuisine" :rules="cuisineRules" label="Cuisine" required></v-text-field>
+    <v-text-field v-model="telephone" :rules="telephoneRules" label="Telephone" required></v-text-field>
+    <v-file-input accept="image/*" label="Image" :rules="imageRules" @change="onImageChange"></v-file-input>
 
     <v-dialog v-model="dialog" persistent max-width="600px" eager>
       <template v-slot:activator="{ on }">
         <v-btn color="primary" dark v-on="on">Set Open Hour</v-btn>
-        <v-btn
-          class="mr-4 submit-btn"
-          @click="onSubmit"
-          :disabled="!isFormValid"
-          >submit</v-btn
-        >
+        <v-btn class="mr-4 submit-btn" @click="onSubmit" :disabled="!isFormValid">submit</v-btn>
       </template>
       <v-card>
         <v-card-title>
@@ -232,16 +200,16 @@ export default {
       telephone: "",
       image: "",
       imageSize: 0,
-      nameRules: [(v) => !!v || "Name is required"],
-      addressRules: [(v) => !!v || "Address is required"],
-      cuisineRules: [(v) => !!v || "Cuisine is required"],
-      telephoneRules: [(v) => !!v || "Telephone is required"],
+      nameRules: [v => !!v || "Name is required"],
+      addressRules: [v => !!v || "Address is required"],
+      cuisineRules: [v => !!v || "Cuisine is required"],
+      telephoneRules: [v => !!v || "Telephone is required"],
       imageRules: [
-        (v) => !!v || "Image is required",
-        (v) => this.imageSize < 2097152,
+        v => !!v || "Image is required",
+        v => this.imageSize < 2097152
       ],
-      eachHourRules: [(v) => this.checkbox || !!v || "Hour is required"],
-      hourRules: [(v) => !this.checkbox || !!v || "Hour is required"],
+      eachHourRules: [v => this.checkbox || !!v || "Hour is required"],
+      hourRules: [v => !this.checkbox || !!v || "Hour is required"],
       select: null,
       days: [
         "Sunday",
@@ -250,7 +218,7 @@ export default {
         "Wednesday",
         "Thursday",
         "Friday",
-        "Saturday",
+        "Saturday"
       ],
       restoType: ["Casual Dining", "Dining"],
       dayHour: {
@@ -260,7 +228,7 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "sundayOpen",
-          menuClose: "sundayClose",
+          menuClose: "sundayClose"
         },
         monday: {
           openHour: null,
@@ -268,7 +236,7 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "mondayOpen",
-          menuClose: "mondayClose",
+          menuClose: "mondayClose"
         },
         tuesday: {
           openHour: null,
@@ -276,7 +244,7 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "tuesdayOpen",
-          menuClose: "tuesdayClose",
+          menuClose: "tuesdayClose"
         },
         wednesday: {
           openHour: null,
@@ -284,7 +252,7 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "wednesdayOpen",
-          menuClose: "wednesdayClose",
+          menuClose: "wednesdayClose"
         },
         thursday: {
           openHour: null,
@@ -292,7 +260,7 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "thursdayOpen",
-          menuClose: "thursdayClose",
+          menuClose: "thursdayClose"
         },
         friday: {
           openHour: null,
@@ -300,7 +268,7 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "fridayOpen",
-          menuClose: "fridayClose",
+          menuClose: "fridayClose"
         },
         saturday: {
           openHour: null,
@@ -308,29 +276,29 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "saturdayOpen",
-          menuClose: "saturdayClose",
-        },
+          menuClose: "saturdayClose"
+        }
       },
       openHour: null,
       closeHour: null,
       menuOpenHour: false,
       menuCloseHour: false,
       dialog: false,
-      checkbox: false,
+      checkbox: false
     };
   },
   methods: {
     setLoading(message, isShown) {
       store.dispatch("setLoading", {
         message,
-        isShown,
+        isShown
       });
     },
     showSnackbar(message, color) {
       store.dispatch("setSnackbar", {
         message,
         isShown: true,
-        color,
+        color
       });
     },
     onImageChange(file) {
@@ -352,7 +320,7 @@ export default {
         Object.keys(openHour).map((key, index) => {
           let newObj = {
             open: this.checkbox ? this.openHour : openHour[key].openHour,
-            close: this.checkbox ? this.closeHour : openHour[key].closeHour,
+            close: this.checkbox ? this.closeHour : openHour[key].closeHour
           };
           openHour[key] = newObj;
         });
@@ -362,25 +330,26 @@ export default {
           telephone: this.telephone,
           location: {
             lat,
-            lon,
+            lon
           },
           address: this.address,
           type: this.type,
           cuisine: this.cuisine,
-          images: [this.image],
-          openHour,
+          image: this.image,
+          openHour
         });
 
         this.setLoading("Loading...", false);
         this.showSnackbar("Waiting for approval", "success");
       } catch (err) {
         this.setLoading("Loading...", false);
+        this.showSnackbar("Something went wrong", "error");
       }
     },
     onRestoTypeChange(val) {
       this.type = val;
-    },
-  },
+    }
+  }
 };
 </script>
 

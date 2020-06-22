@@ -11,7 +11,7 @@ export default new Vuex.Store({
       isShown: false,
     },
     snackbar: null,
-    isAuthenticated: false,
+    isAuthenticated: null,
     authenticatedUser: null,
   },
   mutations: {

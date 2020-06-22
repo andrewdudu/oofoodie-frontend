@@ -49,13 +49,13 @@
         </v-col>
         <v-col cols="2">
           <span>
-            <star-box v-bind:star="4.5"></star-box>
+            <star-box v-bind:star="ratingStats.avgStar.toFixed(1)"></star-box>
           </span>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="10" style="text-align: left; margin-top: -7px">
-          <span class="small-text">100 likes - 58 been there</span>
+          <span class="small-text">{{ likes.length }} like(s) - 58 been there</span>
         </v-col>
       </v-row>
       <v-row style="margin-top: -7px">
@@ -198,12 +198,12 @@
         <v-col cols="4" style="display: flex;justify-content: center; padding-right: 0">
           <div class="star-rating">
             <span class="star-rating-text">
-              <p style="margin: 0">4.9</p>
-              <p style="font-size: 13px; margin: 0">103 likes</p>
+              <p style="margin: 0">{{ ratingStats.avgStar.toFixed(1) }}</p>
+              <p style="font-size: 13px; margin: 0">{{ likes.length }} like(s)</p>
             </span>
           </div>
         </v-col>
-        <v-col cols="7" class="small-text">
+        <v-col cols="7" class="small-text" :style="cssProps">
           <v-row>
             <v-col cols="3" style="padding: 0">5 Star</v-col>
             <v-col cols="9">
@@ -214,7 +214,7 @@
                   </div>
                 </v-col>
                 <v-col cols="4">
-                  <span>89 %</span>
+                  <span>{{ ratingStats.five }} %</span>
                 </v-col>
               </v-row>
             </v-col>
@@ -229,7 +229,7 @@
                   </div>
                 </v-col>
                 <v-col cols="4">
-                  <span>89 %</span>
+                  <span>{{ ratingStats.four }} %</span>
                 </v-col>
               </v-row>
             </v-col>
@@ -244,7 +244,7 @@
                   </div>
                 </v-col>
                 <v-col cols="4">
-                  <span>89 %</span>
+                  <span>{{ ratingStats.three }} %</span>
                 </v-col>
               </v-row>
             </v-col>
@@ -259,7 +259,7 @@
                   </div>
                 </v-col>
                 <v-col cols="4">
-                  <span>89 %</span>
+                  <span>{{ ratingStats.two }} %</span>
                 </v-col>
               </v-row>
             </v-col>
@@ -274,7 +274,7 @@
                   </div>
                 </v-col>
                 <v-col cols="4">
-                  <span>89 %</span>
+                  <span>{{ ratingStats.one }} %</span>
                 </v-col>
               </v-row>
             </v-col>
@@ -339,9 +339,18 @@ export default {
   data() {
     return {
       dialog: false,
+      likes: [],
       restaurant: null,
       marker: null,
-      rating: 0,
+      rating: 5,
+      ratingStats: {
+        five: 0,
+        four: 0,
+        three: 0,
+        two: 0,
+        one: 0,
+        avgStar: 0
+      },
       comment: "",
       reviews: [],
       today: moment()
@@ -356,7 +365,16 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["authenticatedUser"])
+    ...mapGetters(["authenticatedUser"]),
+    cssProps() {
+      return {
+        "--five-star-width": this.ratingStats.five + "%",
+        "--four-star-width": this.ratingStats.four + "%",
+        "--three-star-width": this.ratingStats.three + "%",
+        "--two-star-width": this.ratingStats.two + "%",
+        "--one-star-width": this.ratingStats.one + "%"
+      };
+    }
   },
 
   methods: {
@@ -366,7 +384,10 @@ export default {
         this.marker = [
           [res.data.data.location.lat, res.data.data.location.lon]
         ];
+        this.likes =
+          this.restaurant.likes !== null ? this.restaurant.likes : [];
         this.reviews = this.restaurant.reviews;
+        this.ratingStats = this.restaurant.ratingStats;
         console.log(this.restaurant);
       });
     },
@@ -550,29 +571,33 @@ span {
 }
 
 .progress {
-  width: 50%;
   height: 100%;
   border-radius: 5px;
 }
 
 .five {
   background-color: $five-star-color;
+  width: var(--five-star-width);
 }
 
 .four {
   background-color: $four-star-color;
+  width: var(--four-star-width);
 }
 
 .three {
   background-color: $three-star-color;
+  width: var(--three-star-width);
 }
 
 .two {
   background-color: $two-star-color;
+  width: var(--two-star-width);
 }
 
 .one {
   background-color: $one-star-color;
+  width: var(--one-star-width);
 }
 
 .address {

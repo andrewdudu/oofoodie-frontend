@@ -55,7 +55,7 @@
       </v-row>
       <v-row>
         <v-col cols="10" style="text-align: left; margin-top: -7px">
-          <span class="small-text">{{ likes.length }} like(s) - 58 been there</span>
+          <span class="small-text">{{ likes }} like(s) - 58 been there</span>
         </v-col>
       </v-row>
       <v-row style="margin-top: -7px">
@@ -89,8 +89,8 @@
       <v-row style="margin-top: 10px; margin-bottom: 10px">
         <v-col cols="3">
           <div class="btn-icon-div">
-            <v-btn icon color="deep-orange">
-              <v-icon size="30" color="#838383">mdi-thumb-up</v-icon>
+            <v-btn icon color="deep-orange" @click="onLikeBtnClicked">
+              <v-icon size="30" v-bind:color="isLiked === -1 ? '#838383' : '#3AB87B'">mdi-thumb-up</v-icon>
             </v-btn>
             <span class="medium-text">Like</span>
           </div>
@@ -199,7 +199,7 @@
           <div class="star-rating">
             <span class="star-rating-text">
               <p style="margin: 0">{{ ratingStats.avgStar.toFixed(1) }}</p>
-              <p style="font-size: 13px; margin: 0">{{ likes.length }} like(s)</p>
+              <p style="font-size: 13px; margin: 0">{{ likes }} like(s)</p>
             </span>
           </div>
         </v-col>
@@ -339,7 +339,8 @@ export default {
   data() {
     return {
       dialog: false,
-      likes: [],
+      isLiked: -1,
+      likes: 0,
       restaurant: null,
       marker: null,
       rating: 5,
@@ -384,11 +385,14 @@ export default {
         this.marker = [
           [res.data.data.location.lat, res.data.data.location.lon]
         ];
-        this.likes =
-          this.restaurant.likes !== null ? this.restaurant.likes : [];
         this.reviews = this.restaurant.reviews;
         this.ratingStats = this.restaurant.ratingStats;
-        console.log(this.restaurant);
+        if (this.restaurant.likes !== null) {
+          this.likes = this.restaurant.likes.length;
+          this.isLiked = this.restaurant.likes.indexOf(
+            this.authenticatedUser.username
+          );
+        }
       });
     },
     convertHour(time) {
@@ -413,6 +417,57 @@ export default {
       } else {
         store.dispatch("setSnackbar", {
           message: "Browser is not supported to share.",
+          isShown: true,
+          color: "error"
+        });
+      }
+    },
+    async onLikeBtnClicked() {
+      try {
+        await this.$http.post(
+          `/api/user/restaurant/like`,
+          {},
+          {
+            headers: {
+              "restaurant-id": this.$route.params.id
+            }
+          }
+        );
+
+        let tempLikes;
+        let message = "Liked.";
+        let tempAuthenticatedUser = Object.assign({}, this.authenticatedUser);
+
+        if (this.authenticatedUser.likes !== null) {
+          tempLikes = [...this.authenticatedUser.likes];
+          let index = tempLikes.indexOf(this.$route.params.id);
+
+          if (index !== -1) {
+            tempLikes.splice(index, 1);
+            message = "Disliked.";
+            this.likes--;
+            this.isLiked = -1;
+          } else {
+            tempLikes.push(this.$route.params.id);
+            this.likes++;
+            this.isLiked = 1;
+          }
+        } else {
+          tempLikes = [this.$route.params.id];
+          this.likes++;
+          this.isLiked = 1;
+        }
+
+        tempAuthenticatedUser.likes = [...tempLikes];
+        store.dispatch("setAuthenticatedUser", tempAuthenticatedUser);
+        store.dispatch("setSnackbar", {
+          message,
+          isShown: true,
+          color: "success"
+        });
+      } catch (err) {
+        store.dispatch("setSnackbar", {
+          message: "Something went wrong.",
           isShown: true,
           color: "error"
         });

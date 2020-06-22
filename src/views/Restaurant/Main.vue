@@ -477,10 +477,15 @@ export default {
       try {
         this.dialog = false;
         await this.$http.post(
-          `/api/user/restaurant/${this.$route.params.id}/review`,
+          `/api/user/restaurant/review`,
           {
             star: this.rating,
             comment: this.comment
+          },
+          {
+            headers: {
+              "restaurant-id": this.$route.params.id
+            }
           }
         );
 

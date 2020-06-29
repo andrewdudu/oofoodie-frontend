@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Map v-bind:isAddMarker="isAddMarker" @onAddMarker="onAddMarker" />
+    <Map style="height: 100%;" v-bind:isAddMarker="isAddMarker" @onAddMarker="onAddMarker" />
   </div>
 </template>
 
@@ -10,19 +10,24 @@ import router from "@/router.js";
 
 export default {
   components: {
-    Map,
+    Map
   },
   data() {
     return {
-      isAddMarker: true,
+      isAddMarker: true
     };
   },
   methods: {
     onAddMarker(e) {
       router.push(`/suggest/form?lat=${e.latlng.lat}&lng=${e.latlng.lng}`);
-    },
-  },
+    }
+  }
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+#app {
+  height: 100%;
+  margin-bottom: 0;
+}
+</style>

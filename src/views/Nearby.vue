@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Map v-bind:markers="markers" v-bind:circle="circle" />
+    <Map style="height: 100%;" v-bind:markers="markers" v-bind:circle="circle" />
   </div>
 </template>
 
@@ -29,3 +29,10 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+#app {
+  height: 100%;
+  margin-bottom: 0;
+}
+</style>

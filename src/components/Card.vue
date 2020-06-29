@@ -8,10 +8,7 @@
       <v-row style="margin-bottom: 0px !important">
         <v-col cols="10" class="card-title">{{ data.title }}</v-col>
         <v-col align="center" cols="2">
-          <div class="star-box">
-            <v-icon dark small>star</v-icon>
-            <span class="star-rating">{{ data.rating }}</span>
-          </div>
+          <star-box v-bind:star="data.rating"></star-box>
         </v-col>
       </v-row>
       <v-row>
@@ -22,12 +19,17 @@
 </template>
 
 <script>
+import StarBox from "@/components/StarBox.vue";
+
 export default {
   name: "Card",
+  components: {
+    StarBox
+  },
   props: ["data"],
   data() {
     return this.data;
-  },
+  }
 };
 </script>
 

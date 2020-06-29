@@ -41,5 +41,9 @@ export default new Router({
       path: "/suggest/form",
       component: () => import("./views/SuggestRestaurant/SuggestForm.vue"),
     },
+    {
+      path: "/restaurant/:id",
+      component: () => import("./views/Restaurant/Main.vue"),
+    },
   ],
 });

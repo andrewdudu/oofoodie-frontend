@@ -82,7 +82,11 @@
       </v-row>
       <v-row>
         <v-col cols="12">
-          <Map style="height: 250px; margin-bottom: 5px;" v-bind:markers="marker" />
+          <Map
+            style="height: 250px; margin-bottom: 5px;"
+            v-bind:markers="restaurantMarker"
+            v-bind:centerCoord="centerCoord"
+          />
         </v-col>
       </v-row>
       <v-divider class="divider" />
@@ -329,6 +333,7 @@ import StarBox from "@/components/StarBox.vue";
 import Map from "@/components/Map.vue";
 import ReviewStar from "@/components/ReviewStar.vue";
 import moment from "moment";
+import _ from "lodash";
 import store from "@/store.js";
 import { mapGetters } from "vuex";
 
@@ -346,7 +351,8 @@ export default {
       hasBeenThere: -1,
       likes: 0,
       restaurant: null,
-      marker: null,
+      restaurantMarker: null,
+      centerCoord: [],
       rating: 5,
       ratingStats: {
         five: 0,
@@ -386,9 +392,13 @@ export default {
     initialize() {
       this.$http.get(`/api/restaurant/${this.$route.params.id}`).then(res => {
         this.restaurant = res.data.data;
-        this.marker = [
-          [res.data.data.location.lat, res.data.data.location.lon]
+        this.restaurantMarker = _.clone(res.data.data);
+        this.restaurantMarker.marker = [
+          this.restaurantMarker.location.lat,
+          this.restaurantMarker.location.lon
         ];
+        this.centerCoord = this.restaurantMarker.marker;
+        this.restaurantMarker = [this.restaurantMarker];
         this.reviews = this.restaurant.reviews;
         this.ratingStats = this.restaurant.ratingStats;
         if (this.restaurant.likes !== null) {

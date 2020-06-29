@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Map style="height: 100%;" v-bind:markers="markers" v-bind:circle="circle" />
+    <Map style="height: 100%;" v-bind:markers="restaurantMarkers" v-bind:circle="circle" />
   </div>
 </template>
 
@@ -14,18 +14,45 @@ export default {
   },
   data() {
     return {
-      isAddMarker: true,
-      circle: {
-        center: [-6.93, 107.668],
-        radius: 6,
-        color: "red"
-      },
+      center: [],
+      restaurantMarkers: [],
       markers: [
         [-6.93, 107.66],
         [-6.93, 107.6],
         [-6.93, 107.602]
       ]
     };
+  },
+
+  created() {
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        this.center = [coords.latitude, coords.longitude];
+        this.initialize();
+      },
+      () => {
+        this.center = [-6.93, 107.668];
+        this.initialize();
+      }
+    );
+  },
+
+  methods: {
+    async initialize() {
+      try {
+        let response = await this.$http.get(
+          `/api/restaurant/nearby?lat=${this.center[0]}&lon=${this.center[1]}`
+        );
+
+        this.restaurantMarkers = response.data.data;
+
+        this.restaurantMarkers.map(res => {
+          res.marker = [res.location.lat, res.location.lon];
+          return res;
+        });
+        console.log(response.data);
+      } catch (err) {}
+    }
   }
 };
 </script>

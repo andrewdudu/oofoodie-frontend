@@ -15,7 +15,13 @@
         </v-alert>
         <l-circle-marker :lat-lng="circle.center" :radius="circle.radius" :color="circle.color" />
         <l-marker v-if="selectedMarker !== null" :lat-lng="selectedMarker"></l-marker>
-        <l-marker v-for="marker in markers" :lat-lng="marker" :key="marker"></l-marker>
+        <l-marker v-for="restaurant in markers" :lat-lng="restaurant.marker" :key="restaurant.id">
+          <v-popup>
+            <span>{{ restaurant.name }}</span>
+            <br />
+            <a :href="'/restaurant/' + restaurant.id">Visit</a>
+          </v-popup>
+        </l-marker>
         <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
       </l-map>
     </div>
@@ -24,7 +30,7 @@
 
 <script>
 import Vue from "vue";
-import { LMap, LTileLayer, LMarker, LCircleMarker } from "vue2-leaflet";
+import { LMap, LTileLayer, LMarker, LCircleMarker, LPopup } from "vue2-leaflet";
 import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -32,6 +38,7 @@ Vue.component("l-map", LMap);
 Vue.component("l-tile-layer", LTileLayer);
 Vue.component("l-circle-marker", LCircleMarker);
 Vue.component("l-marker", LMarker);
+Vue.component("v-popup", LPopup);
 
 delete Icon.Default.prototype._getIconUrl;
 
@@ -45,7 +52,7 @@ export default {
   data() {
     return {
       url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
-      zoom: 20,
+      zoom: 16,
       bounds: null,
       selectedMarker: null,
       loaded: false,
@@ -58,22 +65,26 @@ export default {
       }
     };
   },
-  props: ["markers", "isAddMarker"],
+  props: ["centerCoord", "markers", "isAddMarker"],
   mounted() {
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
-        this.center = [coords.latitude, coords.longitude];
-        this.circle.center = this.center;
+        if (!this.centerCoord)
+          this.center = [coords.latitude, coords.longitude];
+        else this.center = this.centerCoord;
+        this.circle.center = [coords.latitude, coords.longitude];
         this.loaded = true;
       },
       err => {
-        this.center = [-6.93, 107.668];
+        if (!this.centerCoord) this.center = [-6.93, 107.668];
+        else this.centerCoord = this.centerCoord;
         this.circle.center = [-6.93, 107.668];
         this.locationDisabled = true;
         this.loaded = true;
       }
     );
   },
+
   methods: {
     onClicked(e) {
       if (this.isAddMarker) {

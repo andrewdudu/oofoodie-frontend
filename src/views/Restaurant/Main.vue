@@ -38,293 +38,295 @@
       </v-card>
     </v-dialog>
 
-    <img v-if="restaurant == null" class="not-found" src="@/assets/restaurant-not-found.svg" />
-    <div class="image">
-      <img class="resto-image" :src="`/api/img/${restaurant.image}`" />
-    </div>
-    <v-container style="padding-top: 7px">
-      <v-row>
-        <v-col cols="10" style="text-align: left">
-          <span class="large-text">{{ restaurant.name }}</span>
-        </v-col>
-        <v-col cols="2">
-          <span>
-            <star-box v-bind:star="ratingStats.avgStar.toFixed(1)"></star-box>
-          </span>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="10" style="text-align: left; margin-top: -7px">
-          <span class="small-text">{{ likes }} like(s) - 58 been there</span>
-        </v-col>
-      </v-row>
-      <v-row style="margin-top: -7px">
-        <v-col cols="8" style="text-align: left">
-          <span class="small-text" style="letter-spacing: 1px; opacity: 0.6; font-weight: bold">
-            {{ restaurant.type.toUpperCase() }} -
-            {{ restaurant.cuisine.toUpperCase() }}
-          </span>
-        </v-col>
-        <v-col class="small-text" cols="4" style="text-align: right">
-          <span style="font-weight: bold; opacity: 0.5">
-            <v-icon size="17">phone</v-icon>
-            {{ restaurant.telephone }}
-          </span>
-        </v-col>
-      </v-row>
-
-      <v-divider class="divider" />
-
-      <v-row>
-        <v-col cols="12" style="text-align: left;">
-          <span class="large-text address">{{ restaurant.address }}</span>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12">
-          <Map
-            style="height: 250px; margin-bottom: 5px;"
-            v-bind:markers="restaurantMarker"
-            v-bind:centerCoord="centerCoord"
-          />
-        </v-col>
-      </v-row>
-      <v-divider class="divider" />
-      <v-row style="margin-top: 10px; margin-bottom: 10px">
-        <v-col cols="3">
-          <div class="btn-icon-div">
-            <v-btn icon color="deep-orange" @click="onLikeBtnClicked">
-              <v-icon size="30" v-bind:color="isLiked === -1 ? '#838383' : '#3AB87B'">mdi-thumb-up</v-icon>
-            </v-btn>
-            <span class="medium-text">Like</span>
-          </div>
-        </v-col>
-        <v-col cols="3">
-          <div class="btn-icon-div">
-            <v-btn icon color="deep-orange" @click="onBeenThereBtnClicked">
-              <v-icon
-                size="40"
-                v-bind:color="hasBeenThere === -1 ? '#838383' : '#3AB87B'"
-              >mdi-bookmark-check</v-icon>
-            </v-btn>
-            <span class="medium-text">Been There</span>
-          </div>
-        </v-col>
-        <v-col cols="3">
-          <div class="btn-icon-div">
-            <v-btn icon color="deep-orange" @click="shareViaWebShare">
-              <v-icon size="40" color="#838383">mdi-share</v-icon>
-            </v-btn>
-            <span class="medium-text">Share</span>
-          </div>
-        </v-col>
-        <v-col cols="3">
-          <div class="btn-icon-div">
-            <v-btn icon color="deep-orange">
-              <v-icon size="40" color="#838383" @click.stop="dialog = true">mdi-star</v-icon>
-            </v-btn>
-            <span class="medium-text">Review</span>
-          </div>
-        </v-col>
-      </v-row>
-
-      <v-divider class="divider" style="margin-bottom: 10px;" />
-
-      <v-row>
-        <span class="small-title">Open Hours :</span>
-      </v-row>
-      <v-row v-for="(value, key) in restaurant.openHour" :key="key" class="medium-text">
-        <v-col cols="1"></v-col>
-        <v-col cols="1">
-          <v-icon
-            v-if="today === key"
-            style="margin-right: 10px;"
-            size="20"
-            class="highlight-text"
-          >mdi-food-fork-drink</v-icon>
-        </v-col>
-        <v-col cols="3" style="text-align: left;">
-          <span v-bind:class="[today === key ? 'highlight-text' : '']">
-            {{
-            key[0].toUpperCase() + key.slice(1)
-            }}
-          </span>
-        </v-col>
-        <v-col cols="6">
-          <span v-bind:class="[today === key ? 'highlight-text' : '']">
-            {{ convertHour(value.open) }} -
-            {{ convertHour(value.close) }}
-          </span>
-        </v-col>
-      </v-row>
-
-      <v-divider class="divider" style="margin-bottom: 10px;" />
-
-      <v-row>
-        <span class="small-title">Rate this place :</span>
-      </v-row>
-      <v-row style="margin-left: 7px;">
-        <review-star
-          v-bind:star="1"
-          style="color: #204732;"
-          v-bind:color="'#204732'"
-          @click="onStarClicked(1)"
-        />
-        <review-star
-          v-bind:star="2"
-          style="color: #2A6B49;"
-          v-bind:color="'#2A6B49'"
-          @click="onStarClicked(2)"
-        />
-        <review-star
-          v-bind:star="3"
-          style="color: #339162;"
-          v-bind:color="'#339162'"
-          @click="onStarClicked(3)"
-        />
-        <review-star
-          v-bind:star="4"
-          style="color: #3AB87B;"
-          v-bind:color="'#3AB87B'"
-          @click="onStarClicked(4)"
-        />
-        <review-star
-          v-bind:star="5"
-          style="color: #41E296;"
-          v-bind:color="'#41E296'"
-          @click="onStarClicked(5)"
-        />
-      </v-row>
-
-      <v-divider class="divider" style="margin-bottom: 10px; margin-top: 15px" />
-
-      <v-row>
-        <span class="small-title">Trustworthy Review</span>
-      </v-row>
-      <v-row>
-        <v-col cols="4" style="display: flex;justify-content: center; padding-right: 0">
-          <div class="star-rating">
-            <span class="star-rating-text">
-              <p style="margin: 0">{{ ratingStats.avgStar.toFixed(1) }}</p>
-              <p style="font-size: 13px; margin: 0">{{ likes }} like(s)</p>
-            </span>
-          </div>
-        </v-col>
-        <v-col cols="7" class="small-text" :style="cssProps">
-          <v-row>
-            <v-col cols="3" style="padding: 0">5 Star</v-col>
-            <v-col cols="9">
-              <v-row>
-                <v-col cols="8" style="padding: 0px;">
-                  <div class="progress-bar">
-                    <div class="progress five"></div>
-                  </div>
-                </v-col>
-                <v-col cols="4">
-                  <span>{{ ratingStats.five }} %</span>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="3">4 Star</v-col>
-            <v-col cols="9">
-              <v-row>
-                <v-col cols="8" style="padding: 0px;">
-                  <div class="progress-bar">
-                    <div class="progress four"></div>
-                  </div>
-                </v-col>
-                <v-col cols="4">
-                  <span>{{ ratingStats.four }} %</span>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="3">3 Star</v-col>
-            <v-col cols="9">
-              <v-row>
-                <v-col cols="8" style="padding: 0px;">
-                  <div class="progress-bar">
-                    <div class="progress three"></div>
-                  </div>
-                </v-col>
-                <v-col cols="4">
-                  <span>{{ ratingStats.three }} %</span>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="3">2 Star</v-col>
-            <v-col cols="9">
-              <v-row>
-                <v-col cols="8" style="padding: 0px;">
-                  <div class="progress-bar">
-                    <div class="progress two"></div>
-                  </div>
-                </v-col>
-                <v-col cols="4">
-                  <span>{{ ratingStats.two }} %</span>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="3">1 Star</v-col>
-            <v-col cols="9">
-              <v-row>
-                <v-col cols="8" style="padding: 0px;">
-                  <div class="progress-bar">
-                    <div class="progress one"></div>
-                  </div>
-                </v-col>
-                <v-col cols="4">
-                  <span>{{ ratingStats.one }} %</span>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-
-      <v-divider class="divider" style="margin-bottom: 10px; margin-top: 15px" />
-
-      <div v-for="review in reviews" :key="review.reviewId">
+    <img v-if="restaurant === null" class="not-found" src="@/assets/restaurant-not-found.svg" />
+    <div v-if="restaurant !== null">
+      <div class="image">
+        <img class="resto-image" :src="`/api/img/${restaurant.image}`" />
+      </div>
+      <v-container style="padding-top: 7px">
         <v-row>
-          <v-col cols="8">
-            <v-row>
-              <v-col cols="12" style="text-align: left;">
-                <span class="medium-text" style="font-weight: bold;">{{ review.user }}</span>
-              </v-col>
-            </v-row>
+          <v-col cols="10" style="text-align: left">
+            <span class="large-text">{{ restaurant.name }}</span>
           </v-col>
-          <v-col cols="4">
-            <v-row>
-              <v-col cols="6" style="padding: 0">
-                <span class="small-text">RATED</span>
-              </v-col>
-              <v-col cols="6" style="padding: 0">
-                <span>
-                  <star-box v-bind:star="review.star"></star-box>
-                </span>
-              </v-col>
-            </v-row>
+          <v-col cols="2">
+            <span>
+              <star-box v-bind:star="ratingStats.avgStar.toFixed(1)"></star-box>
+            </span>
           </v-col>
         </v-row>
         <v-row>
-          <v-col
-            cols="12"
-            style="text-align: justify; line-height: normal; padding-left: 15px; padding-right: 15px"
-          >
-            <span class="small-text">{{ review.comment }}</span>
+          <v-col cols="10" style="text-align: left; margin-top: -7px">
+            <span class="small-text">{{ likes }} like(s) - 58 been there</span>
+          </v-col>
+        </v-row>
+        <v-row style="margin-top: -7px">
+          <v-col cols="8" style="text-align: left">
+            <span class="small-text" style="letter-spacing: 1px; opacity: 0.6; font-weight: bold">
+              {{ restaurant.type.toUpperCase() }} -
+              {{ restaurant.cuisine.toUpperCase() }}
+            </span>
+          </v-col>
+          <v-col class="small-text" cols="4" style="text-align: right">
+            <span style="font-weight: bold; opacity: 0.5">
+              <v-icon size="17">phone</v-icon>
+              {{ restaurant.telephone }}
+            </span>
+          </v-col>
+        </v-row>
+
+        <v-divider class="divider" />
+
+        <v-row>
+          <v-col cols="12" style="text-align: left;">
+            <span class="large-text address">{{ restaurant.address }}</span>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12">
+            <Map
+              style="height: 250px; margin-bottom: 5px;"
+              v-bind:markers="restaurantMarker"
+              v-bind:centerCoord="centerCoord"
+            />
+          </v-col>
+        </v-row>
+        <v-divider class="divider" />
+        <v-row style="margin-top: 10px; margin-bottom: 10px">
+          <v-col cols="3">
+            <div class="btn-icon-div">
+              <v-btn icon color="deep-orange" @click="onLikeBtnClicked">
+                <v-icon size="30" v-bind:color="isLiked === -1 ? '#838383' : '#3AB87B'">mdi-thumb-up</v-icon>
+              </v-btn>
+              <span class="medium-text">Like</span>
+            </div>
+          </v-col>
+          <v-col cols="3">
+            <div class="btn-icon-div">
+              <v-btn icon color="deep-orange" @click="onBeenThereBtnClicked">
+                <v-icon
+                  size="40"
+                  v-bind:color="hasBeenThere === -1 ? '#838383' : '#3AB87B'"
+                >mdi-bookmark-check</v-icon>
+              </v-btn>
+              <span class="medium-text">Been There</span>
+            </div>
+          </v-col>
+          <v-col cols="3">
+            <div class="btn-icon-div">
+              <v-btn icon color="deep-orange" @click="shareViaWebShare">
+                <v-icon size="40" color="#838383">mdi-share</v-icon>
+              </v-btn>
+              <span class="medium-text">Share</span>
+            </div>
+          </v-col>
+          <v-col cols="3">
+            <div class="btn-icon-div">
+              <v-btn icon color="deep-orange">
+                <v-icon size="40" color="#838383" @click.stop="dialog = true">mdi-star</v-icon>
+              </v-btn>
+              <span class="medium-text">Review</span>
+            </div>
+          </v-col>
+        </v-row>
+
+        <v-divider class="divider" style="margin-bottom: 10px;" />
+
+        <v-row>
+          <span class="small-title">Open Hours :</span>
+        </v-row>
+        <v-row v-for="(value, key) in restaurant.openHour" :key="key" class="medium-text">
+          <v-col cols="1"></v-col>
+          <v-col cols="1">
+            <v-icon
+              v-if="today === key"
+              style="margin-right: 10px;"
+              size="20"
+              class="highlight-text"
+            >mdi-food-fork-drink</v-icon>
+          </v-col>
+          <v-col cols="3" style="text-align: left;">
+            <span v-bind:class="[today === key ? 'highlight-text' : '']">
+              {{
+              key[0].toUpperCase() + key.slice(1)
+              }}
+            </span>
+          </v-col>
+          <v-col cols="6">
+            <span v-bind:class="[today === key ? 'highlight-text' : '']">
+              {{ convertHour(value.open) }} -
+              {{ convertHour(value.close) }}
+            </span>
+          </v-col>
+        </v-row>
+
+        <v-divider class="divider" style="margin-bottom: 10px;" />
+
+        <v-row>
+          <span class="small-title">Rate this place :</span>
+        </v-row>
+        <v-row style="margin-left: 7px;">
+          <review-star
+            v-bind:star="1"
+            style="color: #204732;"
+            v-bind:color="'#204732'"
+            @click="onStarClicked(1)"
+          />
+          <review-star
+            v-bind:star="2"
+            style="color: #2A6B49;"
+            v-bind:color="'#2A6B49'"
+            @click="onStarClicked(2)"
+          />
+          <review-star
+            v-bind:star="3"
+            style="color: #339162;"
+            v-bind:color="'#339162'"
+            @click="onStarClicked(3)"
+          />
+          <review-star
+            v-bind:star="4"
+            style="color: #3AB87B;"
+            v-bind:color="'#3AB87B'"
+            @click="onStarClicked(4)"
+          />
+          <review-star
+            v-bind:star="5"
+            style="color: #41E296;"
+            v-bind:color="'#41E296'"
+            @click="onStarClicked(5)"
+          />
+        </v-row>
+
+        <v-divider class="divider" style="margin-bottom: 10px; margin-top: 15px" />
+
+        <v-row>
+          <span class="small-title">Trustworthy Review</span>
+        </v-row>
+        <v-row>
+          <v-col cols="4" style="display: flex;justify-content: center; padding-right: 0">
+            <div class="star-rating">
+              <span class="star-rating-text">
+                <p style="margin: 0">{{ ratingStats.avgStar.toFixed(1) }}</p>
+                <p style="font-size: 13px; margin: 0">{{ likes }} like(s)</p>
+              </span>
+            </div>
+          </v-col>
+          <v-col cols="7" class="small-text" :style="cssProps">
+            <v-row>
+              <v-col cols="3" style="padding: 0">5 Star</v-col>
+              <v-col cols="9">
+                <v-row>
+                  <v-col cols="8" style="padding: 0px;">
+                    <div class="progress-bar">
+                      <div class="progress five"></div>
+                    </div>
+                  </v-col>
+                  <v-col cols="4">
+                    <span>{{ ratingStats.five }} %</span>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="3">4 Star</v-col>
+              <v-col cols="9">
+                <v-row>
+                  <v-col cols="8" style="padding: 0px;">
+                    <div class="progress-bar">
+                      <div class="progress four"></div>
+                    </div>
+                  </v-col>
+                  <v-col cols="4">
+                    <span>{{ ratingStats.four }} %</span>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="3">3 Star</v-col>
+              <v-col cols="9">
+                <v-row>
+                  <v-col cols="8" style="padding: 0px;">
+                    <div class="progress-bar">
+                      <div class="progress three"></div>
+                    </div>
+                  </v-col>
+                  <v-col cols="4">
+                    <span>{{ ratingStats.three }} %</span>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="3">2 Star</v-col>
+              <v-col cols="9">
+                <v-row>
+                  <v-col cols="8" style="padding: 0px;">
+                    <div class="progress-bar">
+                      <div class="progress two"></div>
+                    </div>
+                  </v-col>
+                  <v-col cols="4">
+                    <span>{{ ratingStats.two }} %</span>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="3">1 Star</v-col>
+              <v-col cols="9">
+                <v-row>
+                  <v-col cols="8" style="padding: 0px;">
+                    <div class="progress-bar">
+                      <div class="progress one"></div>
+                    </div>
+                  </v-col>
+                  <v-col cols="4">
+                    <span>{{ ratingStats.one }} %</span>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
 
         <v-divider class="divider" style="margin-bottom: 10px; margin-top: 15px" />
-      </div>
-    </v-container>
+
+        <div v-for="review in reviews" :key="review.reviewId">
+          <v-row>
+            <v-col cols="8">
+              <v-row>
+                <v-col cols="12" style="text-align: left;">
+                  <span class="medium-text" style="font-weight: bold;">{{ review.user }}</span>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col cols="4">
+              <v-row>
+                <v-col cols="6" style="padding: 0">
+                  <span class="small-text">RATED</span>
+                </v-col>
+                <v-col cols="6" style="padding: 0">
+                  <span>
+                    <star-box v-bind:star="review.star"></star-box>
+                  </span>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col
+              cols="12"
+              style="text-align: justify; line-height: normal; padding-left: 15px; padding-right: 15px"
+            >
+              <span class="small-text">{{ review.comment }}</span>
+            </v-col>
+          </v-row>
+
+          <v-divider class="divider" style="margin-bottom: 10px; margin-top: 15px" />
+        </div>
+      </v-container>
+    </div>
   </div>
 </template>
 
@@ -390,29 +392,32 @@ export default {
 
   methods: {
     initialize() {
-      this.$http.get(`/api/restaurant/${this.$route.params.id}`).then(res => {
-        this.restaurant = res.data.data;
-        this.restaurantMarker = _.clone(res.data.data);
-        this.restaurantMarker.marker = [
-          this.restaurantMarker.location.lat,
-          this.restaurantMarker.location.lon
-        ];
-        this.centerCoord = this.restaurantMarker.marker;
-        this.restaurantMarker = [this.restaurantMarker];
-        this.reviews = this.restaurant.reviews;
-        this.ratingStats = this.restaurant.ratingStats;
-        if (this.restaurant.likes !== null) {
-          this.likes = this.restaurant.likes.length;
-          this.isLiked = this.restaurant.likes.indexOf(
-            this.authenticatedUser.username
-          );
-        }
-        if (this.restaurant.beenThere !== null) {
-          this.hasBeenThere = this.restaurant.beenThere.indexOf(
-            this.authenticatedUser.username
-          );
-        }
-      });
+      this.$http
+        .get(`/api/restaurant/${this.$route.params.id}`)
+        .then(res => {
+          this.restaurant = res.data.data;
+          this.restaurantMarker = _.clone(res.data.data);
+          this.restaurantMarker.marker = [
+            this.restaurantMarker.location.lat,
+            this.restaurantMarker.location.lon
+          ];
+          this.centerCoord = this.restaurantMarker.marker;
+          this.restaurantMarker = [this.restaurantMarker];
+          this.reviews = this.restaurant.reviews;
+          this.ratingStats = this.restaurant.ratingStats;
+          if (this.restaurant.likes !== null) {
+            this.likes = this.restaurant.likes.length;
+            this.isLiked = this.restaurant.likes.indexOf(
+              this.authenticatedUser.username
+            );
+          }
+          if (this.restaurant.beenThere !== null) {
+            this.hasBeenThere = this.restaurant.beenThere.indexOf(
+              this.authenticatedUser.username
+            );
+          }
+        })
+        .catch(err => {});
     },
     convertHour(time) {
       let timeString = time;

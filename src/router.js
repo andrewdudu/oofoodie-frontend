@@ -24,6 +24,11 @@ export default new Router({
       component: () => import("./views/Profile.vue"),
     },
     {
+      path: "/explore",
+      name: "explore",
+      component: () => import("./views/Explore.vue"),
+    },
+    {
       path: "/forgot-password",
       name: "forgot-password",
       component: () => import("./views/ForgotPassword.vue"),

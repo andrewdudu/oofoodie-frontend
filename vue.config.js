@@ -4,11 +4,11 @@ module.exports = {
     https: true,
     proxy: {
       "^/api/": {
-        target: "http://192.168.5.3:8080",
+        target: "http://192.168.5.5:8080",
         changeOrigin: true,
       },
       "^/auth/": {
-        target: "http://192.168.5.3:8080",
+        target: "http://192.168.5.5:8080",
         changeOrigin: true,
       },
     },

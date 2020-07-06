@@ -1,5 +1,5 @@
 <template>
-  <div v-if="authenticatedUser !== null">
+  <div>
     <v-row>
       <v-col cols="5">
         <v-row>

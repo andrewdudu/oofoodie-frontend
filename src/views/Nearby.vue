@@ -50,7 +50,6 @@ export default {
           res.marker = [res.location.lat, res.location.lon];
           return res;
         });
-        console.log(response.data);
       } catch (err) {}
     }
   }

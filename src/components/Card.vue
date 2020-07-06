@@ -1,18 +1,18 @@
 <template>
   <v-card>
     <v-img>
-      <img :src="data.img" />
+      <img :src="data.image" />
     </v-img>
 
     <v-card-text class="text--primary">
       <v-row style="margin-bottom: 0px !important">
-        <v-col cols="10" class="card-title">{{ data.title }}</v-col>
+        <v-col cols="10" class="card-title">{{ data.name }}</v-col>
         <v-col align="center" cols="2">
-          <star-box v-bind:star="data.rating"></star-box>
+          <star-box v-bind:star="data.ratingStats ? data.ratingStats.avgStar : '-'"></star-box>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="6" class="card-description">{{ data.likes }} Likes</v-col>
+        <v-col cols="6" class="card-description">{{ data.likes ? data.likes.length : 0 }} Likes</v-col>
       </v-row>
     </v-card-text>
   </v-card>

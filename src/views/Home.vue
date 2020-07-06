@@ -2,7 +2,12 @@
   <div class="home">
     <div class="search-input">
       <div class="search-div">
-        <input class="search" placeholder="Type here to Search Restaurant" />
+        <input
+          class="search"
+          placeholder="Type here to Search Restaurant"
+          @change="onInputChange"
+          v-on:keyup.enter="onSubmitSearch"
+        />
         <v-icon>search</v-icon>
       </div>
     </div>
@@ -43,49 +48,59 @@ export default {
     Hooper,
     Slide,
     HooperPagination,
-    Card,
+    Card
   },
   data() {
     return {
       datas: [
         {
-          img:
+          image:
             "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
-          title: "The Magic of Nolem Gur The Magic of Nolem Gur",
+          name: "The Magic of Nolem Gur The Magic of Nolem Gur",
           rating: 4.9,
-          likes: 21,
+          likes: 21
         },
         {
-          img:
+          image:
             "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
-          title: "The Magic of Nolem Gur",
+          name: "The Magic of Nolem Gur",
           rating: 4.9,
-          likes: 21,
+          likes: 21
         },
         {
-          img:
+          image:
             "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
-          title: "The Magic of Nolem Gur",
+          name: "The Magic of Nolem Gur",
           rating: 4.9,
-          likes: 21,
+          likes: 21
         },
         {
-          img:
+          image:
             "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
-          title: "The Magic of Nolem Gur",
+          name: "The Magic of Nolem Gur",
           rating: 4.9,
-          likes: 21,
+          likes: 21
         },
         {
-          img:
+          image:
             "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
-          title: "The Magic of Nolem Gur",
+          name: "The Magic of Nolem Gur",
           rating: 4.9,
-          likes: 21,
-        },
-      ],
+          likes: 21
+        }
+      ]
     };
   },
+
+  methods: {
+    onInputChange(e) {
+      console.log(e.target.value);
+      console.log("change");
+    },
+    onSubmitSearch() {
+      console.log("test");
+    }
+  }
 };
 </script>
 

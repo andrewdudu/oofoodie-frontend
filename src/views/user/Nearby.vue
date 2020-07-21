@@ -1,16 +1,22 @@
 <template>
   <div id="app">
+    <Header />
     <Map style="height: 100%;" v-bind:markers="restaurantMarkers" v-bind:circle="circle" />
+    <Footer />
   </div>
 </template>
 
 <script>
 import Map from "@/components/Map.vue";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 
 export default {
   name: "app",
   components: {
-    Map
+    Map,
+    Header,
+    Footer
   },
   data() {
     return {

@@ -12,7 +12,12 @@ export default new Vuex.Store({
     },
     snackbar: null,
     isAuthenticated: null,
+    isAdminAuthenticated: null,
+    isMerchantAuthenticated: null,
     authenticatedUser: null,
+    authenticatedAdmin: null,
+    authenticatedMerchant: null,
+    role: null,
   },
   mutations: {
     setLoading(state, value) {
@@ -21,12 +26,26 @@ export default new Vuex.Store({
     setSnackbar(state, value) {
       state.snackbar = value;
     },
+    setRole(state, value) {
+      state.role = value;
+    },
     setAuthenticated(state, value) {
       state.isAuthenticated = value;
     },
+    setAdminAuthenticated(state, value) {
+      state.isAdminAuthenticated = value;
+    },
+    setMerchantAuthenticated(state, value) {
+      state.isMerchantAuthenticated = value;
+    },
     setAuthenticatedUser(state, value) {
-      console.log(value);
       state.authenticatedUser = value;
+    },
+    setAuthenticatedAdmin(state, value) {
+      state.authenticatedAdmin = value;
+    },
+    setAuthenticatedMerchant(state, value) {
+      state.authenticatedMerchant = value;
     },
   },
   actions: {
@@ -36,18 +55,41 @@ export default new Vuex.Store({
     setSnackbar({ commit }, snackbar) {
       commit("setSnackbar", snackbar);
     },
+    setRole({ commit }, role) {
+      commit("setRole", role);
+    },
     setAuthenticated({ commit }, isAuthenticated) {
       commit("setAuthenticated", isAuthenticated);
+    },
+    setAdminAuthenticated({ commit }, isAdminAuthenticated) {
+      commit("setAdminAuthenticated", isAdminAuthenticated);
+    },
+    setMerchantAuthenticated({ commit }, isMerchantAuthenticated) {
+      commit("setMerchantAuthenticated", isMerchantAuthenticated);
     },
     setAuthenticatedUser({ commit }, user) {
       commit("setAuthenticatedUser", user);
     },
+    setAuthenticatedAdmin({ commit }, admin) {
+      commit("setAuthenticatedAdmin", admin);
+    },
+    setAuthenticatedMerchant({ commit }, merchant) {
+      commit("setAuthenticatedMerchant", merchant);
+    },
     getAuthenticated({ commit }) {
-      axios
+      return axios
         .post("/auth/refresh")
         .then((response) => {
-          commit("setAuthenticated", true);
-          commit("setAuthenticatedUser", response.data.user);
+          if (response.data.user.roles.includes("ROLE_USER")) {
+            commit("setAuthenticated", true);
+            commit("setAuthenticatedUser", response.data.user);
+          } else if (response.data.user.roles.includes("ROLE_MERCHANT")) {
+            commit("setMerchantAuthenticated", true);
+            commit("setAuthenticatedMerchant", response.data.user);
+          } else if (response.data.user.roles.includes("ROLE_ADMIN")) {
+            commit("setAdminAuthenticated", true);
+            commit("setAuthenticatedAdmin", response.data.user);
+          }
         })
         .catch(() => {
           commit("setAuthenticated", false);
@@ -67,6 +109,18 @@ export default new Vuex.Store({
     },
     authenticatedUser(state) {
       return state.authenticatedUser;
+    },
+    isAdminAuthenticated(state) {
+      return state.isAdminAuthenticated;
+    },
+    isMerchantAuthenticated(state) {
+      return state.isMerchantAuthenticated;
+    },
+    authenticatedMerchant(state) {
+      return state.authenticatedMerchant;
+    },
+    authenticatedAdmin(state) {
+      return state.authenticatedAdmin;
     },
   },
 });

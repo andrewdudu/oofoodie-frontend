@@ -1,10 +1,8 @@
 <template>
-  <v-app id="app">
-    <Header />
+  <v-app v-if="isRefreshed" id="app">
     <Loading />
     <Snackbar />
     <router-view />
-    <Footer />
   </v-app>
 </template>
 
@@ -17,6 +15,11 @@ import Snackbar from "@/components/Snackbar.vue";
 import { mapActions } from "vuex";
 
 export default {
+  data() {
+    return {
+      isRefreshed: false
+    };
+  },
   components: {
     Header,
     Footer,
@@ -24,7 +27,9 @@ export default {
     Snackbar
   },
   created() {
-    this.getAuthenticated();
+    this.getAuthenticated()
+      .then(res => (this.isRefreshed = true))
+      .catch(err => (this.isRefreshed = true));
   },
   methods: {
     ...mapActions(["getAuthenticated"])

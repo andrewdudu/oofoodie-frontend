@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Header />
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
         <v-card-title>
@@ -327,11 +328,14 @@
         </div>
       </v-container>
     </div>
+    <Footer />
   </div>
 </template>
 
 <script>
 import StarBox from "@/components/StarBox.vue";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 import Map from "@/components/Map.vue";
 import ReviewStar from "@/components/ReviewStar.vue";
 import moment from "moment";
@@ -343,7 +347,9 @@ export default {
   components: {
     StarBox,
     Map,
-    ReviewStar
+    ReviewStar,
+    Header,
+    Footer
   },
 
   data() {

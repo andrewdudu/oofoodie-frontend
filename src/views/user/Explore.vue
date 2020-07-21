@@ -1,37 +1,45 @@
 <template>
-  <v-container>
-    <v-autocomplete
-      :search-input.sync="search"
-      :onChange="debounceInput()"
-      color="grey"
-      hide-no-data
-      hide-selected
-      item-text="Description"
-      item-value="Search"
-      placeholder="Start typing to Search"
-      prepend-icon="search"
-      return-object
-    ></v-autocomplete>
-    <v-row v-for="restaurant in restaurants" :key="restaurant.id">
-      <router-link :to="`/restaurant/${restaurant.id}`" style="text-decoration: none">
-        <card v-bind:data="restaurant"></card>
-      </router-link>
-    </v-row>
-    <img
-      v-if="restaurants.length === 0"
-      src="@/assets/empty.svg"
-      style="width: 100%; padding: 30px;margin-top: 50px;"
-    />
-  </v-container>
+  <div>
+    <Header />
+    <v-container>
+      <v-autocomplete
+        :search-input.sync="search"
+        :onChange="debounceInput()"
+        color="grey"
+        hide-no-data
+        hide-selected
+        item-text="Description"
+        item-value="Search"
+        placeholder="Start typing to Search"
+        prepend-icon="search"
+        return-object
+      ></v-autocomplete>
+      <v-row v-for="restaurant in restaurants" :key="restaurant.id">
+        <router-link :to="`/restaurant/${restaurant.id}`" style="text-decoration: none">
+          <card v-bind:data="restaurant"></card>
+        </router-link>
+      </v-row>
+      <img
+        v-if="restaurants.length === 0"
+        src="@/assets/empty.svg"
+        style="width: 100%; padding: 30px;margin-top: 50px;"
+      />
+    </v-container>
+    <Footer />
+  </div>
 </template>
 
 <script>
 import _ from "lodash";
 import Card from "@/components/Card.vue";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 
 export default {
   components: {
-    Card
+    Card,
+    Header,
+    Footer
   },
 
   data() {

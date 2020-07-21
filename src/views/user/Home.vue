@@ -1,47 +1,55 @@
 <template>
-  <div class="home">
-    <div class="search-input">
-      <div class="search-div">
-        <input
-          v-model="search"
-          class="search"
-          placeholder="Type here to Search Restaurant"
-          v-on:keyup.enter="onSubmitSearch"
-        />
-        <v-icon>search</v-icon>
+  <div>
+    <Header />
+    <div class="home">
+      <div class="search-input">
+        <div class="search-div">
+          <input
+            v-model="search"
+            class="search"
+            placeholder="Type here to Search Restaurant"
+            v-on:keyup.enter="onSubmitSearch"
+          />
+          <v-icon>search</v-icon>
+        </div>
+      </div>
+
+      <span class="voucher-title">Vouchers</span>
+      <hooper :infiniteScroll="true" :autoPlay="true" :playSpeed="3000">
+        <slide>
+          <img src="../../assets/voucher.jpg" />
+        </slide>
+        <slide>
+          <img src="../../assets/voucher.jpg" />
+        </slide>
+        <hooper-pagination slot="hooper-addons" />
+      </hooper>
+
+      <span class="voucher-title">Popular Restaurants</span>
+      <div class="horizontal-scroll">
+        <div v-bind:key="index" v-for="(data, index) in popularRestaurants">
+          <router-link :to="`/restaurant/${data.id}`" style="text-decoration: none">
+            <card :class="index === 0 ? '' : 'margin-left'" v-bind:data="data" />
+          </router-link>
+        </div>
       </div>
     </div>
-
-    <span class="voucher-title">Vouchers</span>
-    <hooper :infiniteScroll="true" :autoPlay="true" :playSpeed="3000">
-      <slide>
-        <img src="../assets/voucher.jpg" />
-      </slide>
-      <slide>
-        <img src="../assets/voucher.jpg" />
-      </slide>
-      <hooper-pagination slot="hooper-addons" />
-    </hooper>
-
-    <span class="voucher-title">Popular Restaurants</span>
-    <div class="horizontal-scroll">
-      <div v-bind:key="index" v-for="(data, index) in popularRestaurants">
-        <router-link :to="`/restaurant/${data.id}`" style="text-decoration: none">
-          <card :class="index === 0 ? '' : 'margin-left'" v-bind:data="data" />
-        </router-link>
-      </div>
-    </div>
+    <Footer />
   </div>
 </template>
 
 <script>
 import { Hooper, Slide, Pagination as HooperPagination } from "hooper";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 import Card from "@/components/Card.vue";
 import router from "@/router.js";
 import "hooper/dist/hooper.css";
 
 export default {
   components: {
+    Header,
+    Footer,
     Hooper,
     Slide,
     HooperPagination,
@@ -223,7 +231,7 @@ img {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url("../assets/home.jpg") no-repeat center center;
+  background: url("../../assets/home.jpg") no-repeat center center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;

@@ -47,13 +47,14 @@ export default {
       isLoading: false,
       restaurants: [],
       resto: [],
+      query: this.$route.query.q,
       search: null
     };
   },
 
   methods: {
     async onChange() {
-      console.log("called");
+      if (this.query !== null) this.search = this.query;
       try {
         if (this.search !== null && this.search !== "") {
           let response = await this.$http.get(
@@ -67,6 +68,7 @@ export default {
 
           this.restaurants = _.cloneDeep(response.data.data);
           this.search = null;
+          this.query = null;
         }
       } catch (err) {}
     }

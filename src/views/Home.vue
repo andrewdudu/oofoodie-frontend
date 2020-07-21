@@ -3,9 +3,9 @@
     <div class="search-input">
       <div class="search-div">
         <input
+          v-model="search"
           class="search"
           placeholder="Type here to Search Restaurant"
-          @change="onInputChange"
           v-on:keyup.enter="onSubmitSearch"
         />
         <v-icon>search</v-icon>
@@ -25,14 +25,10 @@
 
     <span class="voucher-title">Popular Restaurants</span>
     <div class="horizontal-scroll">
-      <div v-bind:key="index" v-for="(data, index) in datas">
-        <card :class="index === 0 ? '' : 'margin-left'" v-bind:data="data" />
-      </div>
-    </div>
-    <span class="voucher-title">Nearby Restaurants</span>
-    <div class="horizontal-scroll">
-      <div v-bind:key="index" v-for="(data, index) in datas">
-        <card :class="index === 0 ? '' : 'margin-left'" v-bind:data="data" />
+      <div v-bind:key="index" v-for="(data, index) in popularRestaurants">
+        <router-link :to="`/restaurant/${data.id}`" style="text-decoration: none">
+          <card :class="index === 0 ? '' : 'margin-left'" v-bind:data="data" />
+        </router-link>
       </div>
     </div>
   </div>
@@ -41,6 +37,7 @@
 <script>
 import { Hooper, Slide, Pagination as HooperPagination } from "hooper";
 import Card from "@/components/Card.vue";
+import router from "@/router.js";
 import "hooper/dist/hooper.css";
 
 export default {
@@ -50,8 +47,11 @@ export default {
     HooperPagination,
     Card
   },
+
   data() {
     return {
+      search: "",
+      popularRestaurants: [],
       datas: [
         {
           image:
@@ -92,13 +92,31 @@ export default {
     };
   },
 
+  created() {
+    this.initialize();
+  },
+
   methods: {
-    onInputChange(e) {
-      console.log(e.target.value);
-      console.log("change");
-    },
     onSubmitSearch() {
-      console.log("test");
+      router.push({ path: "explore", query: { q: this.search } });
+    },
+    async initialize() {
+      try {
+        let response = await this.$http.get("/api/restaurant/popular");
+
+        this.popularRestaurants = response.data.data.map(restaurant => {
+          return {
+            id: restaurant.id,
+            image: `/api/img/${restaurant.image}`,
+            name: restaurant.name,
+            rating:
+              restaurant.ratingStats !== null
+                ? restaurant.ratingStats.avgStar
+                : 0,
+            likes: restaurant.likes !== null ? restaurant.likes : 0
+          };
+        });
+      } catch (err) {}
     }
   }
 };

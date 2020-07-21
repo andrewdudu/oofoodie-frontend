@@ -1,60 +1,63 @@
 <template>
-  <v-form class="form" v-model="isFormValid">
-    <v-row>
-      <v-text-field
-        v-model="email"
-        :rules="emailRules"
-        label="Email"
-        required
-      ></v-text-field>
-    </v-row>
-    <v-row>
-      <div class="my-2">
-        <v-btn
-          rounded
-          color="#41E296"
-          :disabled="!isFormValid"
-          class="white--text"
-          @click="onResetClicked"
-        >
-          Reset
-        </v-btn>
-      </div>
-    </v-row>
-  </v-form>
+  <div>
+    <Header />
+    <v-form class="form" v-model="isFormValid">
+      <v-row>
+        <v-text-field v-model="email" :rules="emailRules" label="Email" required></v-text-field>
+      </v-row>
+      <v-row>
+        <div class="my-2">
+          <v-btn
+            rounded
+            color="#41E296"
+            :disabled="!isFormValid"
+            class="white--text"
+            @click="onResetClicked"
+          >Reset</v-btn>
+        </div>
+      </v-row>
+    </v-form>
+    <Footer />
+  </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 import store from "@/store";
 
 export default {
   name: "forgot-password",
+  components: {
+    Header,
+    Footer
+  },
   data() {
     return {
       isFormValid: false,
       email: "",
       emailRules: [
-        (v) => !!v || "E-mail is required",
-        (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
-      ],
+        v => !!v || "E-mail is required",
+        v => /.+@.+\..+/.test(v) || "E-mail must be valid"
+      ]
     };
   },
   computed: {
-    ...mapGetters(["isAuthenticated"]),
+    ...mapGetters(["isAuthenticated"])
   },
   methods: {
     setLoading(message, isShown) {
       store.dispatch("setLoading", {
         message,
-        isShown,
+        isShown
       });
     },
     showSnackbar(message, color) {
       store.dispatch("setSnackbar", {
         message,
         isShown: true,
-        color,
+        color
       });
     },
     async onResetClicked() {
@@ -62,7 +65,7 @@ export default {
         this.setLoading("Sending...", true);
 
         await this.$http.post("/auth/forgot-password", {
-          email: this.email,
+          email: this.email
         });
 
         this.setLoading("Sending...", false);
@@ -70,8 +73,8 @@ export default {
       } catch (err) {
         this.setLoading("Loading...", false);
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

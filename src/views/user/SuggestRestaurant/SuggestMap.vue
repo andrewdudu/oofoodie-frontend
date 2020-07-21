@@ -1,16 +1,22 @@
 <template>
   <div id="app">
+    <Header />
     <Map style="height: 100%;" v-bind:isAddMarker="isAddMarker" @onAddMarker="onAddMarker" />
+    <Footer />
   </div>
 </template>
 
 <script>
 import Map from "@/components/Map.vue";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 import router from "@/router.js";
 
 export default {
   components: {
-    Map
+    Map,
+    Header,
+    Footer
   },
   data() {
     return {

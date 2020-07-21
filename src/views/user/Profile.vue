@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Header />
     <v-row>
       <v-col cols="5">
         <v-row>
@@ -137,22 +138,35 @@
             </template>
             <v-card class="elevation-2">
               <v-card-title class="headline">{{ n.resto_name }}</v-card-title>
-              <v-card-text>Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sed euismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae.</v-card-text>
+              <v-card-text>
+                Lorem ipsum dolor sit amet, no nam oblique veritus. Commune
+                scaevola imperdiet nec ut, sed euismod convenire principes at.
+                Est et nobis iisque percipit, an vim zril disputando
+                voluptatibus, vix an salutandi sententiae.
+              </v-card-text>
             </v-card>
           </v-timeline-item>
         </v-timeline>
       </v-tab-item>
       <v-tab-item value="orders">orders</v-tab-item>
     </v-tabs>
+    <Footer />
   </div>
 </template>
 
 <script>
 import router from "@/router.js";
 import store from "@/store.js";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
 import { mapGetters } from "vuex";
 
 export default {
+  components: {
+    Header,
+    Footer
+  },
+
   data() {
     return {
       dialog: false,
@@ -245,7 +259,6 @@ export default {
           ).toFixed(2);
         }
       }
-      console.log(this.authenticatedUser);
       return this.authenticatedUser;
     }
   },
@@ -296,8 +309,10 @@ export default {
         this.setLoading("Signing up...", false);
         this.showSnackbar("Signup Success.", "success");
       } catch (err) {
+        let message = "Please fill the form correctly.";
         this.setLoading("Signing up...", false);
-        this.showSnackbar("Please fill the form correctly.", "error");
+        if (err.response.status === 400) message = err.response.data.message;
+        this.showSnackbar(message, "error");
       }
     }
   }

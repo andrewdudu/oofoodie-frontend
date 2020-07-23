@@ -21,7 +21,9 @@
     "vue-axios": "^2.1.5",
     "vue-router": "^3.0.3",
     "vue2-leaflet": "^2.5.2",
+    "vuejs-datetimepicker": "^1.1.13",
     "vuetify": "^2.2.20",
+    "vuetify-datetime-picker": "^2.1.1",
     "vuex": "^3.0.1"
   },
   "devDependencies": {

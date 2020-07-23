@@ -1,8 +1,14 @@
 <template>
-  <v-data-table :headers="headers" :items="data" :items-per-page="15" class="elevation-1">
+  <v-data-table :headers="headers" :items="restaurants" :items-per-page="15" class="elevation-1">
     <template v-slot:item.actions="{ item }">
       <v-icon small class="mr-2" @click="display(item)">mdi-eye</v-icon>
-      <v-btn small color="primary" @click="approve(item)">Approve</v-btn>
+      <v-btn
+        v-if="item.requested !== null"
+        small
+        color="primary"
+        @click="request(item)"
+      >Cancel Request</v-btn>
+      <v-btn v-if="hasNotRequested" small color="primary" @click="request(item)">Request</v-btn>
     </template>
     <template v-slot:top>
       <v-dialog v-model="dialog" max-width="500px">
@@ -15,23 +21,43 @@
             <v-container>
               <v-row>
                 <v-col cols="4" class="left">Name :</v-col>
-                <v-col cols="8" class="right">{{ selectedRestaurant.name }}</v-col>
+                <v-col cols="8" class="right">
+                  {{
+                  selectedRestaurant.name
+                  }}
+                </v-col>
               </v-row>
               <v-row>
                 <v-col cols="4" class="left">Telephone :</v-col>
-                <v-col cols="8" class="right">{{ selectedRestaurant.telephone }}</v-col>
+                <v-col cols="8" class="right">
+                  {{
+                  selectedRestaurant.telephone
+                  }}
+                </v-col>
               </v-row>
               <v-row>
                 <v-col cols="4" class="left">Address :</v-col>
-                <v-col cols="8" class="right">{{ selectedRestaurant.address }}</v-col>
+                <v-col cols="8" class="right">
+                  {{
+                  selectedRestaurant.address
+                  }}
+                </v-col>
               </v-row>
               <v-row>
                 <v-col cols="4" class="left">Type :</v-col>
-                <v-col cols="8" class="right">{{ selectedRestaurant.type }}</v-col>
+                <v-col cols="8" class="right">
+                  {{
+                  selectedRestaurant.type
+                  }}
+                </v-col>
               </v-row>
               <v-row>
                 <v-col cols="4" class="left">Cuisine :</v-col>
-                <v-col cols="8" class="right">{{ selectedRestaurant.cuisine }}</v-col>
+                <v-col cols="8" class="right">
+                  {{
+                  selectedRestaurant.cuisine
+                  }}
+                </v-col>
               </v-row>
               <v-row>
                 <v-col cols="4" class="left">Image :</v-col>
@@ -43,34 +69,17 @@
                 <v-col cols="4" class="left">Open Hour :</v-col>
                 <v-col cols="8">
                   <v-row v-for="(value, name) in selectedRestaurant.openHour" :key="name">
-                    <v-col cols="4" class="left">{{ name.charAt(0).toUpperCase() + name.slice(1) }}</v-col>
-                    <v-col
-                      cols="8"
-                      class="right"
-                    >{{ convertHour(value.open) }} - {{ convertHour(value.close) }}</v-col>
+                    <v-col cols="4" class="left">
+                      {{
+                      name.charAt(0).toUpperCase() + name.slice(1)
+                      }}
+                    </v-col>
+                    <v-col cols="8" class="right">
+                      {{ convertHour(value.open) }} -
+                      {{ convertHour(value.close) }}
+                    </v-col>
                   </v-row>
                 </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-
-          <v-card-title>
-            <span class="headline">Merchant Detail</span>
-          </v-card-title>
-
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="4" class="left">Name :</v-col>
-                <v-col cols="8" class="right">{{ selectedRestaurant.merchantName }}</v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="4" class="left">Username :</v-col>
-                <v-col cols="8" class="right">{{ selectedRestaurant.username }}</v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="4" class="left">Email :</v-col>
-                <v-col cols="8" class="right">{{ selectedRestaurant.email }}</v-col>
               </v-row>
             </v-container>
           </v-card-text>
@@ -87,29 +96,35 @@
 
 <script>
 import store from "@/store.js";
+import { mapGetters } from "vuex";
 
 export default {
   created() {
     this.initialize();
   },
 
+  computed: {
+    ...mapGetters(["isMerchantAuthenticated", "authenticatedMerchant"])
+  },
+
   data() {
     return {
       dialog: false,
+      hasNotRequested: true,
       headers: [
         {
-          text: "Restaurant Name",
+          text: "Name",
           align: "start",
           sortable: false,
           value: "name"
         },
-        { text: "Merchant Username", value: "username" },
-        { text: "Merchant Name", value: "merchantName" },
+        { text: "Telephone", value: "telephone" },
+        { text: "Address", value: "address" },
         { text: "Type", value: "type" },
         { text: "Cuisine", value: "cuisine" },
         { text: "Actions", value: "actions" }
       ],
-      data: [],
+      restaurants: [],
       selectedRestaurant: {}
     };
   },
@@ -121,25 +136,45 @@ export default {
           message: "Loading...",
           isShown: true
         });
-        let response = await this.$http.get("/api/admin/restaurant/request");
-
-        this.data = response.data.data.map(data =>
-          Object.assign(
-            { merchantName: data.merchant.name },
-            data.merchant,
-            data.restaurant
-          )
+        let response = await this.$http.get(
+          "/api/merchant/restaurant/available"
         );
+
         store.dispatch("setLoading", {
-          message: "Loading...",
+          message: "Approving...",
           isShown: false
+        });
+        this.restaurants = response.data.data.map(restaurant => {
+          let requested = null;
+          if (
+            restaurant.merchantUsername === this.authenticatedMerchant.username
+          ) {
+            this.hasNotRequested = false;
+            requested = true;
+          }
+          return Object.assign({}, restaurant, {
+            requested
+          });
         });
       } catch (err) {
         store.dispatch("setLoading", {
-          message: "Loading...",
+          message: "Approving...",
           isShown: false
         });
       }
+    },
+    setLoading(message, isShown) {
+      store.dispatch("setLoading", {
+        message,
+        isShown
+      });
+    },
+    showSnackbar(message, color) {
+      store.dispatch("setSnackbar", {
+        message,
+        isShown: true,
+        color
+      });
     },
     convertHour(time) {
       let timeString = time;
@@ -149,43 +184,22 @@ export default {
       timeString = h + timeString.substr(2, 3) + ampm;
       return timeString;
     },
-    async approve(item) {
+    async request(item) {
       try {
-        store.dispatch("setLoading", {
-          message: "Approving...",
-          isShown: true
-        });
-        let response = await this.$http.post(
-          `/api/admin/restaurant/${item.id}`
-        );
+        this.setLoading("Requesting...", true);
 
-        store.dispatch("setLoading", {
-          message: "Approving...",
-          isShown: false
-        });
-        store.dispatch("setSnackbar", {
-          message: "Approved.",
-          isShown: true,
-          color: "success"
-        });
+        await this.$http.post(`/api/merchant/restaurant/${item.id}/request`);
 
-        this.removeApprovedRestaurant(item);
+        item.requested = item.requested === null ? true : null;
+        this.hasNotRequested = !this.hasNotRequested;
+        this.setLoading("Login...", false);
+        this.showSnackbar("Request success.", "success");
       } catch (err) {
-        store.dispatch("setLoading", {
-          message: "Approving...",
-          isShown: false
-        });
-        store.dispatch("setSnackbar", {
-          message: "Something went wrong, try again later.",
-          isShown: true,
-          color: "error"
-        });
-      }
-    },
-    removeApprovedRestaurant(item) {
-      let index = this.restaurants.indexOf(item);
-      if (index > -1) {
-        this.restaurants.splice(index, 1);
+        this.setLoading("", false);
+        this.showSnackbar(
+          "Something went wrong, please try again later.",
+          "error"
+        );
       }
     },
     display(item) {
@@ -198,10 +212,7 @@ export default {
         type: item.type,
         cuisine: item.cuisine,
         image: item.image,
-        openHour: item.openHour,
-        merchantName: item.merchantName,
-        username: item.username,
-        email: item.email
+        openHour: item.openHour
       };
     }
   }

@@ -1,13 +1,7 @@
 <template>
   <div>
     <div v-if="loaded" class="map">
-      <l-map
-        :zoom="zoom"
-        :center="center"
-        @click="onClicked"
-        :bounds="markers"
-        :update:center="test"
-      >
+      <l-map :zoom="zoom" :center="center" @click="onClicked" :bounds="markers">
         <v-alert v-if="locationDisabled" dense border="left" type="warning" style="z-index:2000">
           Please allow your
           <strong>browser</strong> to access your

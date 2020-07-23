@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <Header />
-    <v-dialog v-model="dialog" persistent max-width="600px">
+  <div class="margin-bottom">
+    <Header btn="Order" @onBtnClicked="onOrder" />
+    <v-dialog v-model="dialog" persistent>
       <v-card>
         <v-card-title>
           <span class="headline">Review</span>
@@ -39,12 +39,67 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="orderDialog" persistent>
+      <v-card>
+        <v-card-title>
+          <span class="headline">Menu</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row v-for="menu in restaurant.menus" :key="menu.name">
+              <v-col cols="4">
+                <v-checkbox
+                  class="no-margin-top"
+                  v-model="orderSelected"
+                  :label="menu.name"
+                  :value="menu"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="4">
+                <span class="v-label theme--light">Rp {{ formatPrice(menu.price) }}</span>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-if="orderSelected.indexOf(menu) !== -1"
+                  class="no-margion-top margin-top-minus"
+                  v-model="menuWithQty[menu.name].qty"
+                  type="number"
+                  append-outer-icon="add"
+                  @click:append-outer="addQty(menu.name)"
+                  prepend-icon="remove"
+                  @click:prepend="minusQty(menu.name)"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="4">
+                <span>Time :</span>
+              </v-col>
+              <v-col cols="8">
+                <datetime
+                  format="DD-MM-YYYY h:i:s"
+                  width="100%"
+                  v-model="orderMenuTime"
+                  style="position: static"
+                ></datetime>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="orderDialog = false">Close</v-btn>
+          <v-btn color="blue darken-1" text @click="onOrderSubmit">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <img v-if="restaurant === null" class="not-found" src="@/assets/restaurant-not-found.svg" />
     <div v-if="restaurant !== null">
       <div class="image">
         <img class="resto-image" :src="`/api/img/${restaurant.image}`" />
       </div>
-      <v-container style="padding-top: 7px">
+      <v-container class="padding-top">
         <v-row>
           <v-col cols="10" style="text-align: left">
             <span class="large-text">{{ restaurant.name }}</span>
@@ -57,7 +112,7 @@
         </v-row>
         <v-row>
           <v-col cols="10" style="text-align: left; margin-top: -7px">
-            <span class="small-text">{{ likes }} like(s) - 58 been there</span>
+            <span class="small-text">{{ likes }} like(s) - {{ hasBeenThereCount }} been there</span>
           </v-col>
         </v-row>
         <v-row style="margin-top: -7px">
@@ -146,11 +201,9 @@
             >mdi-food-fork-drink</v-icon>
           </v-col>
           <v-col cols="3" style="text-align: left;">
-            <span v-bind:class="[today === key ? 'highlight-text' : '']">
-              {{
-              key[0].toUpperCase() + key.slice(1)
-              }}
-            </span>
+            <span
+              v-bind:class="[today === key ? 'highlight-text' : '']"
+            >{{ key[0].toUpperCase() + key.slice(1) }}</span>
           </v-col>
           <v-col cols="6">
             <span v-bind:class="[today === key ? 'highlight-text' : '']">
@@ -198,7 +251,7 @@
           />
         </v-row>
 
-        <v-divider class="divider" style="margin-bottom: 10px; margin-top: 15px" />
+        <v-divider class="divider" />
 
         <v-row>
           <span class="small-title">Trustworthy Review</span>
@@ -232,7 +285,7 @@
               <v-col cols="3">4 Star</v-col>
               <v-col cols="9">
                 <v-row>
-                  <v-col cols="8" style="padding: 0px;">
+                  <v-col cols="8 no-padding">
                     <div class="progress-bar">
                       <div class="progress four"></div>
                     </div>
@@ -247,7 +300,7 @@
               <v-col cols="3">3 Star</v-col>
               <v-col cols="9">
                 <v-row>
-                  <v-col cols="8" style="padding: 0px;">
+                  <v-col cols="8 no-padding">
                     <div class="progress-bar">
                       <div class="progress three"></div>
                     </div>
@@ -262,7 +315,7 @@
               <v-col cols="3">2 Star</v-col>
               <v-col cols="9">
                 <v-row>
-                  <v-col cols="8" style="padding: 0px;">
+                  <v-col cols="8 no-padding">
                     <div class="progress-bar">
                       <div class="progress two"></div>
                     </div>
@@ -277,7 +330,7 @@
               <v-col cols="3">1 Star</v-col>
               <v-col cols="9">
                 <v-row>
-                  <v-col cols="8" style="padding: 0px;">
+                  <v-col cols="8 no-padding">
                     <div class="progress-bar">
                       <div class="progress one"></div>
                     </div>
@@ -291,14 +344,18 @@
           </v-col>
         </v-row>
 
-        <v-divider class="divider" style="margin-bottom: 10px; margin-top: 15px" />
+        <v-divider class="divider" />
 
         <div v-for="review in reviews" :key="review.reviewId">
           <v-row>
             <v-col cols="8">
               <v-row>
-                <v-col cols="12" style="text-align: left;">
-                  <span class="medium-text" style="font-weight: bold;">{{ review.user }}</span>
+                <v-col cols="12 align-left">
+                  <span class="medium-text" style="font-weight: bold;">
+                    {{
+                    review.user
+                    }}
+                  </span>
                 </v-col>
               </v-row>
             </v-col>
@@ -324,7 +381,7 @@
             </v-col>
           </v-row>
 
-          <v-divider class="divider" style="margin-bottom: 10px; margin-top: 15px" />
+          <v-divider class="divider" />
         </div>
       </v-container>
     </div>
@@ -339,6 +396,7 @@ import Footer from "@/components/Footer.vue";
 import Map from "@/components/Map.vue";
 import ReviewStar from "@/components/ReviewStar.vue";
 import moment from "moment";
+import datetime from "vuejs-datetimepicker";
 import _ from "lodash";
 import store from "@/store.js";
 import { mapGetters } from "vuex";
@@ -349,40 +407,41 @@ export default {
     Map,
     ReviewStar,
     Header,
-    Footer
+    Footer,
+    datetime,
   },
-
   data() {
     return {
       dialog: false,
+      orderDialog: false,
+      orderSelected: [],
       isLiked: -1,
       hasBeenThere: -1,
+      hasBeenThereCount: 0,
       likes: 0,
+      qty: 0,
       restaurant: null,
       restaurantMarker: null,
       centerCoord: [],
+      menuWithQty: {},
       rating: 5,
+      orderMenuTime: null,
       ratingStats: {
         five: 0,
         four: 0,
         three: 0,
         two: 0,
         one: 0,
-        avgStar: 0
+        avgStar: 0,
       },
       comment: "",
       reviews: [],
-      today: moment()
-        .isoWeekday(moment().day())
-        .format("dddd")
-        .toLowerCase()
+      today: moment().isoWeekday(moment().day()).format("dddd").toLowerCase(),
     };
   },
-
   created() {
     this.initialize();
   },
-
   computed: {
     ...mapGetters(["authenticatedUser"]),
     cssProps() {
@@ -391,39 +450,55 @@ export default {
         "--four-star-width": this.ratingStats.four + "%",
         "--three-star-width": this.ratingStats.three + "%",
         "--two-star-width": this.ratingStats.two + "%",
-        "--one-star-width": this.ratingStats.one + "%"
+        "--one-star-width": this.ratingStats.one + "%",
       };
-    }
+    },
   },
-
   methods: {
     initialize() {
       this.$http
         .get(`/api/restaurant/${this.$route.params.id}`)
-        .then(res => {
+        .then((res) => {
           this.restaurant = res.data.data;
           this.restaurantMarker = _.clone(res.data.data);
           this.restaurantMarker.marker = [
             this.restaurantMarker.location.lat,
-            this.restaurantMarker.location.lon
+            this.restaurantMarker.location.lon,
           ];
           this.centerCoord = this.restaurantMarker.marker;
           this.restaurantMarker = [this.restaurantMarker];
-          this.reviews = this.restaurant.reviews;
-          this.ratingStats = this.restaurant.ratingStats;
+          this.reviews =
+            this.restaurant.reviews !== null ? this.restaurant.reviews : [];
+          if (this.restaurant.ratingStats !== null)
+            this.ratingStats = this.restaurant.ratingStats;
           if (this.restaurant.likes !== null) {
             this.likes = this.restaurant.likes.length;
-            this.isLiked = this.restaurant.likes.indexOf(
-              this.authenticatedUser.username
-            );
+            if (this.authenticatedUser !== null) {
+              this.isLiked = this.restaurant.likes.indexOf(
+                this.authenticatedUser.username
+              );
+            }
           }
           if (this.restaurant.beenThere !== null) {
-            this.hasBeenThere = this.restaurant.beenThere.indexOf(
-              this.authenticatedUser.username
-            );
+            if (this.authenticatedUser !== null) {
+              this.hasBeenThere = this.restaurant.beenThere.indexOf(
+                this.authenticatedUser.username
+              );
+            }
+            this.hasBeenThereCount = this.restaurant.beenThere.length;
+          }
+          if (this.restaurant.menus !== null) {
+            this.restaurant.menus.forEach((menu) => {
+              let tempObj = {};
+              tempObj[menu.name] = {
+                price: menu.price,
+                qty: 0,
+              };
+              return Object.assign(this.menuWithQty, tempObj);
+            });
           }
         })
-        .catch(err => {});
+        .catch((err) => {});
     },
     convertHour(time) {
       let timeString = time;
@@ -442,15 +517,18 @@ export default {
         navigator.share({
           title: "I've been there !!",
           text: `Come visit ${this.restaurant.name}`,
-          url: window.location.pathname
+          url: window.location.pathname,
         });
       } else {
         store.dispatch("setSnackbar", {
           message: "Browser is not supported to share.",
           isShown: true,
-          color: "error"
+          color: "error",
         });
       }
+    },
+    onOrder() {
+      this.orderDialog = true;
     },
     async onLikeBtnClicked() {
       try {
@@ -459,8 +537,8 @@ export default {
           {},
           {
             headers: {
-              "restaurant-id": this.$route.params.id
-            }
+              "restaurant-id": this.$route.params.id,
+            },
           }
         );
 
@@ -493,13 +571,13 @@ export default {
         store.dispatch("setSnackbar", {
           message,
           isShown: true,
-          color: "success"
+          color: "success",
         });
       } catch (err) {
         store.dispatch("setSnackbar", {
           message: "Something went wrong.",
           isShown: true,
-          color: "error"
+          color: "error",
         });
       }
     },
@@ -510,22 +588,74 @@ export default {
           {},
           {
             headers: {
-              "restaurant-id": this.$route.params.id
-            }
+              "restaurant-id": this.$route.params.id,
+            },
           }
         );
 
         store.dispatch("setSnackbar", {
           message: "Submitted.",
           isShown: true,
-          color: "success"
+          color: "success",
         });
       } catch (err) {
         store.dispatch("setSnackbar", {
           message: "Something went wrong.",
           isShown: true,
-          color: "error"
+          color: "error",
         });
+      }
+    },
+    addQty(menuName) {
+      this.menuWithQty[menuName].qty += 1;
+      let tempObj = Object.assign({}, this.menuWithQty);
+      delete this.menuWithQty[menuName];
+      this.menuWithQty = Object.assign({}, tempObj);
+    },
+    minusQty(menuName) {
+      if (this.menuWithQty[menuName].qty > 0)
+        this.menuWithQty[menuName].qty -= 1;
+      let tempObj = Object.assign({}, this.menuWithQty);
+      delete this.menuWithQty[menuName];
+      this.menuWithQty = Object.assign({}, tempObj);
+    },
+    formatPrice(value) {
+      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+    async onOrderSubmit() {
+      try {
+        let requestBody = [];
+        for (let [key, value] of Object.entries(this.menuWithQty)) {
+          if (value.qty !== 0) {
+            requestBody.push({
+              name: key,
+              price: value.price,
+              qty: value.qty,
+            });
+          }
+        }
+
+        let response = await this.$http.post(
+          `/api/user/restaurant/${this.$route.params.id}/order`,
+          {
+            orderMenu: requestBody,
+            time: this.orderMenuTime,
+          }
+        );
+
+        store.dispatch("setSnackbar", {
+          message: "Order success.",
+          isShown: true,
+          color: "success",
+        });
+        this.orderDialog = false;
+      } catch (err) {
+        store.dispatch("setSnackbar", {
+          message: "Something went wrong, please try again.",
+          isShown: true,
+          color: "error",
+        });
+        this.orderDialog = false;
       }
     },
     async onReviewSubmit() {
@@ -535,17 +665,17 @@ export default {
           `/api/user/restaurant/review`,
           {
             star: this.rating,
-            comment: this.comment
+            comment: this.comment,
           },
           {
             headers: {
-              "restaurant-id": this.$route.params.id
-            }
+              "restaurant-id": this.$route.params.id,
+            },
           }
         );
 
         let hasReviewed = false;
-        this.reviews.forEach(review => {
+        this.reviews.forEach((review) => {
           if (review.user === this.authenticatedUser.username) {
             review.star = this.rating;
             review.comment = this.comment;
@@ -559,25 +689,25 @@ export default {
             star: this.rating,
             restoId: this.$route.params.id,
             user: this.authenticatedUser.username,
-            id: "temp-id"
+            id: "temp-id",
           };
-          this.review.push(review);
+          this.reviews.push(review);
         }
 
         store.dispatch("setSnackbar", {
           message: "Review submitted.",
           isShown: true,
-          color: "success"
+          color: "success",
         });
       } catch (err) {
         store.dispatch("setSnackbar", {
           message: "Something went wrong, Please try again later.",
           isShown: true,
-          color: "error"
+          color: "error",
         });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -611,6 +741,8 @@ $one-star-color: #204732;
 .divider {
   margin: 3px 0 5px 0;
   opacity: 0.5;
+  margin-bottom: 10px;
+  margin-top: 15px;
 }
 
 .image {
@@ -728,5 +860,35 @@ span {
 
 .v-dialog__content {
   z-index: 2002 !important;
+}
+
+.padding-top {
+  padding-top: 7px;
+}
+
+.align-left {
+  text-align: left;
+}
+
+.no-padding {
+  padding: 0px;
+}
+
+.margin-bottom {
+  margin-bottom: 30px;
+}
+
+.no-margin-top {
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+.margin-top-minus {
+  margin-top: -5px;
+  padding-top: 0px;
+}
+
+.calendar-div {
+  position: static !important;
 }
 </style>

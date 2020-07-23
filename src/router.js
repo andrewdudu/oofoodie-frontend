@@ -10,6 +10,7 @@ const NearbyPage = () => import("@/views/user/Nearby.vue");
 const ProfilePage = () => import("@/views/user/Profile.vue");
 const ExplorePage = () => import("@/views/user/Explore.vue");
 const ForgotPasswordPage = () => import("@/views/user/ForgotPassword.vue");
+const ProfileDetailPage = () => import("@/views/user/ProfileDetail.vue");
 const ResetPasswordPage = () => import("@/views/user/ResetPassword.vue");
 const SuggestMapPage = () =>
   import("@/views/user/SuggestRestaurant/SuggestMap.vue");
@@ -31,6 +32,9 @@ const MerchantForgotPasswordPage = () =>
   import("@/views/merchant/ForgotPassword.vue");
 const MerchantResetPasswordPage = () =>
   import("@/views/merchant/ResetPassword.vue");
+const MerchantRestaurantRequestPage = () =>
+  import("@/views/merchant/Restaurant.vue");
+const MerchantMenuPage = () => import("@/views/merchant/Menu.vue");
 
 export default new Router({
   mode: "history",
@@ -80,6 +84,11 @@ export default new Router({
       path: "/restaurant/:id",
       name: "restaurant-detail",
       component: RestaurantDetailPage,
+    },
+    {
+      path: "/profile/:username",
+      name: "profile-detail",
+      component: ProfileDetailPage,
     },
     {
       path: "/admin",
@@ -135,7 +144,10 @@ export default new Router({
           next();
         else next("/merchant");
       },
-      children: [],
+      children: [
+        { path: "restaurant", component: MerchantRestaurantRequestPage },
+        { path: "menu", component: MerchantMenuPage },
+      ],
     },
   ],
 });

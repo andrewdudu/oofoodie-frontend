@@ -2,8 +2,18 @@
   <div>
     <Header />
     <v-form class="form" v-model="isFormValid">
-      <v-text-field v-model="name" :rules="nameRules" label="Restaurant Name" required></v-text-field>
-      <v-text-field v-model="address" :rules="addressRules" label="Address" required></v-text-field>
+      <v-text-field
+        v-model="name"
+        :rules="nameRules"
+        label="Restaurant Name"
+        required
+      ></v-text-field>
+      <v-text-field
+        v-model="address"
+        :rules="addressRules"
+        label="Address"
+        required
+      ></v-text-field>
       <v-select
         v-model="model"
         :items="restoType"
@@ -15,17 +25,39 @@
           <v-chip v-if="index === 0">
             <span>{{ item }}</span>
           </v-chip>
-          <span v-if="index === 1" class="grey--text caption">(+{{ model.length - 1 }} others)</span>
+          <span v-if="index === 1" class="grey--text caption"
+            >(+{{ model.length - 1 }} others)</span
+          >
         </template>
       </v-select>
-      <v-text-field v-model="cuisine" :rules="cuisineRules" label="Cuisine" required></v-text-field>
-      <v-text-field v-model="telephone" :rules="telephoneRules" label="Telephone" required></v-text-field>
-      <v-file-input accept="image/*" label="Image" :rules="imageRules" @change="onImageChange"></v-file-input>
+      <v-text-field
+        v-model="cuisine"
+        :rules="cuisineRules"
+        label="Cuisine"
+        required
+      ></v-text-field>
+      <v-text-field
+        v-model="telephone"
+        :rules="telephoneRules"
+        label="Telephone"
+        required
+      ></v-text-field>
+      <v-file-input
+        accept="image/*"
+        label="Image"
+        :rules="imageRules"
+        @change="onImageChange"
+      ></v-file-input>
 
       <v-dialog v-model="dialog" persistent max-width="600px" eager>
         <template v-slot:activator="{ on }">
           <v-btn color="primary" dark v-on="on">Set Open Hour</v-btn>
-          <v-btn class="mr-4 submit-btn" @click="onSubmit" :disabled="!isFormValid">submit</v-btn>
+          <v-btn
+            class="mr-4 submit-btn"
+            @click="onSubmit"
+            :disabled="!isFormValid"
+            >submit</v-btn
+          >
         </template>
         <v-card>
           <v-card-title>
@@ -43,15 +75,11 @@
             <div v-if="checkbox">
               <v-row>
                 <v-col class="d-flex" cols="6">
-                  <v-menu
-                    ref="menu"
+                  <v-dialog
+                    ref="dialog"
                     v-model="menuOpenHour"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    max-width="290px"
-                    min-width="290px"
+                    persistent
+                    width="290px"
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
@@ -68,19 +96,20 @@
                       v-model="openHour"
                       full-width
                       @click:minute="$refs.menu.save(openHour)"
-                    ></v-time-picker>
-                  </v-menu>
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="menuOpenHour = false"
+                        >Ok</v-btn
+                      >
+                    </v-time-picker>
+                  </v-dialog>
                 </v-col>
                 <v-col class="d-flex" cols="6">
-                  <v-menu
-                    ref="menu"
+                  <v-dialog
+                    ref="dialog"
                     v-model="menuCloseHour"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    max-width="290px"
-                    min-width="290px"
+                    persistent
+                    width="290px"
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
@@ -97,8 +126,13 @@
                       v-model="closeHour"
                       full-width
                       @click:minute="$refs.menu.save(closeHour)"
-                    ></v-time-picker>
-                  </v-menu>
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="menuCloseHour = false"
+                        >Ok</v-btn
+                      >
+                    </v-time-picker>
+                  </v-dialog>
                 </v-col>
               </v-row>
             </div>
@@ -113,15 +147,11 @@
                   <span>{{ day.slice(0, 3) }}</span>
                 </v-col>
                 <v-col class="d-flex" cols="5">
-                  <v-menu
-                    ref="menu"
+                  <v-dialog
+                    ref="dialog"
                     v-model="dayHour[day.toLowerCase()].openMenu"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    max-width="290px"
-                    min-width="290px"
+                    persistent
+                    width="290px"
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
@@ -137,22 +167,23 @@
                       v-if="dayHour[day.toLowerCase()].openMenu"
                       v-model="dayHour[day.toLowerCase()].openHour"
                       full-width
-                      @click:minute="
-                      $refs.menu.save(dayHour[day.toLowerCase()].openHour)
-                    "
-                    ></v-time-picker>
-                  </v-menu>
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        text
+                        color="primary"
+                        @click="dayHour[day.toLowerCase()].openMenu = false"
+                        >Ok</v-btn
+                      >
+                    </v-time-picker>
+                  </v-dialog>
                 </v-col>
                 <v-col class="d-flex" cols="5">
-                  <v-menu
-                    ref="menu"
+                  <v-dialog
+                    ref="dialog"
                     v-model="dayHour[day.toLowerCase()].closeMenu"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    max-width="290px"
-                    min-width="290px"
+                    persistent
+                    width="290px"
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
@@ -168,18 +199,25 @@
                       v-if="dayHour[day.toLowerCase()].closeMenu"
                       v-model="dayHour[day.toLowerCase()].closeHour"
                       full-width
-                      @click:minute="
-                      $refs.menu.save(dayHour[day.toLowerCase()].closeHour)
-                    "
-                    ></v-time-picker>
-                  </v-menu>
+                    >
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        text
+                        color="primary"
+                        @click="dayHour[day.toLowerCase()].closeMenu = false"
+                        >Ok</v-btn
+                      >
+                    </v-time-picker>
+                  </v-dialog>
                 </v-col>
               </v-row>
             </div>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
+            <v-btn color="blue darken-1" text @click="dialog = false"
+              >Save</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -197,7 +235,7 @@ import _ from "lodash";
 export default {
   components: {
     Header,
-    Footer
+    Footer,
   },
 
   data() {
@@ -211,16 +249,16 @@ export default {
       telephone: "",
       image: "",
       imageSize: 0,
-      nameRules: [v => !!v || "Name is required"],
-      addressRules: [v => !!v || "Address is required"],
-      cuisineRules: [v => !!v || "Cuisine is required"],
-      telephoneRules: [v => !!v || "Telephone is required"],
+      nameRules: [(v) => !!v || "Name is required"],
+      addressRules: [(v) => !!v || "Address is required"],
+      cuisineRules: [(v) => !!v || "Cuisine is required"],
+      telephoneRules: [(v) => !!v || "Telephone is required"],
       imageRules: [
-        v => !!v || "Image is required",
-        v => this.imageSize < 2097152
+        (v) => !!v || "Image is required",
+        (v) => this.imageSize < 2097152,
       ],
-      eachHourRules: [v => this.checkbox || !!v || "Hour is required"],
-      hourRules: [v => !this.checkbox || !!v || "Hour is required"],
+      eachHourRules: [(v) => this.checkbox || !!v || "Hour is required"],
+      hourRules: [(v) => !this.checkbox || !!v || "Hour is required"],
       select: null,
       days: [
         "Sunday",
@@ -229,7 +267,7 @@ export default {
         "Wednesday",
         "Thursday",
         "Friday",
-        "Saturday"
+        "Saturday",
       ],
       restoType: ["Casual Dining", "Dining"],
       dayHour: {
@@ -239,7 +277,7 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "sundayOpen",
-          menuClose: "sundayClose"
+          menuClose: "sundayClose",
         },
         monday: {
           openHour: null,
@@ -247,7 +285,7 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "mondayOpen",
-          menuClose: "mondayClose"
+          menuClose: "mondayClose",
         },
         tuesday: {
           openHour: null,
@@ -255,7 +293,7 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "tuesdayOpen",
-          menuClose: "tuesdayClose"
+          menuClose: "tuesdayClose",
         },
         wednesday: {
           openHour: null,
@@ -263,7 +301,7 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "wednesdayOpen",
-          menuClose: "wednesdayClose"
+          menuClose: "wednesdayClose",
         },
         thursday: {
           openHour: null,
@@ -271,7 +309,7 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "thursdayOpen",
-          menuClose: "thursdayClose"
+          menuClose: "thursdayClose",
         },
         friday: {
           openHour: null,
@@ -279,7 +317,7 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "fridayOpen",
-          menuClose: "fridayClose"
+          menuClose: "fridayClose",
         },
         saturday: {
           openHour: null,
@@ -287,29 +325,29 @@ export default {
           openMenu: false,
           closeMenu: false,
           menuOpen: "saturdayOpen",
-          menuClose: "saturdayClose"
-        }
+          menuClose: "saturdayClose",
+        },
       },
       openHour: null,
       closeHour: null,
       menuOpenHour: false,
       menuCloseHour: false,
       dialog: false,
-      checkbox: false
+      checkbox: false,
     };
   },
   methods: {
     setLoading(message, isShown) {
       store.dispatch("setLoading", {
         message,
-        isShown
+        isShown,
       });
     },
     showSnackbar(message, color) {
       store.dispatch("setSnackbar", {
         message,
         isShown: true,
-        color
+        color,
       });
     },
     onImageChange(file) {
@@ -331,23 +369,23 @@ export default {
         Object.keys(openHour).map((key, index) => {
           let newObj = {
             open: this.checkbox ? this.openHour : openHour[key].openHour,
-            close: this.checkbox ? this.closeHour : openHour[key].closeHour
+            close: this.checkbox ? this.closeHour : openHour[key].closeHour,
           };
           openHour[key] = newObj;
         });
 
-        let response = await this.$http.post("/api/restaurant", {
+        let response = await this.$http.post("/api/user/restaurant", {
           name: this.name,
           telephone: this.telephone,
           location: {
             lat,
-            lon
+            lon,
           },
           address: this.address,
           type: this.type,
           cuisine: this.cuisine,
           image: this.image,
-          openHour
+          openHour,
         });
 
         this.setLoading("Loading...", false);
@@ -359,8 +397,8 @@ export default {
     },
     onRestoTypeChange(val) {
       this.type = val;
-    }
-  }
+    },
+  },
 };
 </script>
 

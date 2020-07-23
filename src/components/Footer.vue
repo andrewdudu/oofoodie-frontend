@@ -1,5 +1,5 @@
 <template>
-  <v-bottom-navigation :value="activeBtn" color="purple lighten-1" class="footer">
+  <v-bottom-navigation color="purple lighten-1" class="footer">
     <v-btn to="/">
       <span>Home</span>
       <v-icon>home</v-icon>
@@ -29,7 +29,7 @@
 
 <script>
 export default {
-  name: "BarRouter"
+  name: "BarRouter",
 };
 </script>
 

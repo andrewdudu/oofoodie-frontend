@@ -8,6 +8,7 @@ import vuetify from "@/plugins/vuetify";
 import "./registerServiceWorker";
 
 Vue.use(VueAxios, axios);
+Vue.axios.defaults.baseURL = `http://localhost:8080/`;
 Vue.config.productionTip = false;
 
 new Vue({

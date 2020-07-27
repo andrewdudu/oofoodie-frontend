@@ -72,7 +72,7 @@ export default {
       },
       (err) => {
         if (!this.centerCoord) this.center = [-6.93, 107.668];
-        else this.centerCoord = this.centerCoord;
+        else this.center = this.centerCoord;
         this.circle.center = [-6.93, 107.668];
         this.locationDisabled = true;
         this.loaded = true;

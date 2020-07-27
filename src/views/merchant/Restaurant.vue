@@ -62,7 +62,10 @@
               <v-row>
                 <v-col cols="4" class="left">Image :</v-col>
                 <v-col cols="8" class="right">
-                  <img :src="`/api/img/${selectedRestaurant.image}`" style="width: 100%" />
+                  <img
+                    :src="`http://128.199.110.11:8080/api/img/${selectedRestaurant.image}`"
+                    style="width: 100%"
+                  />
                 </v-col>
               </v-row>
               <v-row>
@@ -104,7 +107,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["isMerchantAuthenticated", "authenticatedMerchant"])
+    ...mapGetters(["isMerchantAuthenticated", "authenticatedMerchant"]),
   },
 
   data() {
@@ -116,16 +119,16 @@ export default {
           text: "Name",
           align: "start",
           sortable: false,
-          value: "name"
+          value: "name",
         },
         { text: "Telephone", value: "telephone" },
         { text: "Address", value: "address" },
         { text: "Type", value: "type" },
         { text: "Cuisine", value: "cuisine" },
-        { text: "Actions", value: "actions" }
+        { text: "Actions", value: "actions" },
       ],
       restaurants: [],
-      selectedRestaurant: {}
+      selectedRestaurant: {},
     };
   },
 
@@ -134,7 +137,7 @@ export default {
       try {
         store.dispatch("setLoading", {
           message: "Loading...",
-          isShown: true
+          isShown: true,
         });
         let response = await this.$http.get(
           "/api/merchant/restaurant/available"
@@ -142,9 +145,9 @@ export default {
 
         store.dispatch("setLoading", {
           message: "Approving...",
-          isShown: false
+          isShown: false,
         });
-        this.restaurants = response.data.data.map(restaurant => {
+        this.restaurants = response.data.data.map((restaurant) => {
           let requested = null;
           if (
             restaurant.merchantUsername === this.authenticatedMerchant.username
@@ -153,27 +156,27 @@ export default {
             requested = true;
           }
           return Object.assign({}, restaurant, {
-            requested
+            requested,
           });
         });
       } catch (err) {
         store.dispatch("setLoading", {
           message: "Approving...",
-          isShown: false
+          isShown: false,
         });
       }
     },
     setLoading(message, isShown) {
       store.dispatch("setLoading", {
         message,
-        isShown
+        isShown,
       });
     },
     showSnackbar(message, color) {
       store.dispatch("setSnackbar", {
         message,
         isShown: true,
-        color
+        color,
       });
     },
     convertHour(time) {
@@ -212,10 +215,10 @@ export default {
         type: item.type,
         cuisine: item.cuisine,
         image: item.image,
-        openHour: item.openHour
+        openHour: item.openHour,
       };
-    }
-  }
+    },
+  },
 };
 </script>
 

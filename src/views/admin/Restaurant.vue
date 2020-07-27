@@ -36,7 +36,10 @@
               <v-row>
                 <v-col cols="4" class="left">Image :</v-col>
                 <v-col cols="8" class="right">
-                  <img :src="`/api/img/${selectedRestaurant.image}`" style="width: 100%" />
+                  <img
+                    :src="`http://128.199.110.11:8080/api/img/${selectedRestaurant.image}`"
+                    style="width: 100%"
+                  />
                 </v-col>
               </v-row>
               <v-row>
@@ -80,16 +83,16 @@ export default {
           text: "Name",
           align: "start",
           sortable: false,
-          value: "name"
+          value: "name",
         },
         { text: "Telephone", value: "telephone" },
         { text: "Address", value: "address" },
         { text: "Type", value: "type" },
         { text: "Cuisine", value: "cuisine" },
-        { text: "Actions", value: "actions" }
+        { text: "Actions", value: "actions" },
       ],
       restaurants: [],
-      selectedRestaurant: {}
+      selectedRestaurant: {},
     };
   },
 
@@ -98,19 +101,19 @@ export default {
       try {
         store.dispatch("setLoading", {
           message: "Loading...",
-          isShown: true
+          isShown: true,
         });
         let response = await this.$http.get("/api/admin/restaurant");
 
         store.dispatch("setLoading", {
           message: "Approving...",
-          isShown: false
+          isShown: false,
         });
         this.restaurants = response.data.data;
       } catch (err) {
         store.dispatch("setLoading", {
           message: "Approving...",
-          isShown: false
+          isShown: false,
         });
       }
     },
@@ -126,7 +129,7 @@ export default {
       try {
         store.dispatch("setLoading", {
           message: "Approving...",
-          isShown: true
+          isShown: true,
         });
         let response = await this.$http.post(
           `/api/admin/restaurant/${item.id}`
@@ -134,24 +137,24 @@ export default {
 
         store.dispatch("setLoading", {
           message: "Approving...",
-          isShown: false
+          isShown: false,
         });
         store.dispatch("setSnackbar", {
           message: "Approved.",
           isShown: true,
-          color: "success"
+          color: "success",
         });
 
         this.removeApprovedRestaurant(item);
       } catch (err) {
         store.dispatch("setLoading", {
           message: "Approving...",
-          isShown: false
+          isShown: false,
         });
         store.dispatch("setSnackbar", {
           message: "Something went wrong, try again later.",
           isShown: true,
-          color: "error"
+          color: "error",
         });
       }
     },
@@ -172,10 +175,10 @@ export default {
         type: item.type,
         cuisine: item.cuisine,
         image: item.image,
-        openHour: item.openHour
+        openHour: item.openHour,
       };
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -39,7 +39,7 @@ export default {
   components: {
     Card,
     Header,
-    Footer
+    Footer,
   },
 
   data() {
@@ -48,7 +48,7 @@ export default {
       restaurants: [],
       resto: [],
       query: this.$route.query.q,
-      search: null
+      search: null,
     };
   },
 
@@ -61,8 +61,8 @@ export default {
             `/api/restaurant/search?q=${this.search}`
           );
 
-          response.data.data.map(resto => {
-            resto.image = `/api/img/${resto.image}`;
+          response.data.data.map((resto) => {
+            resto.image = `http://128.199.110.11:8080/api/img/${resto.image}`;
             return resto;
           });
 
@@ -71,12 +71,12 @@ export default {
           this.query = null;
         }
       } catch (err) {}
-    }
+    },
   },
 
   created() {
     this.debounceInput = _.debounce(this.onChange, 500);
-  }
+  },
 };
 </script>
 

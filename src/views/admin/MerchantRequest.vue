@@ -128,7 +128,10 @@ export default {
 
         this.data = response.data.data.map((data) =>
           Object.assign(
-            { merchantName: data.merchant.name },
+            {
+              merchantName: data.merchant.name,
+              requestId: data.id,
+            },
             data.merchant,
             data.restaurant
           )
@@ -159,7 +162,7 @@ export default {
           isShown: true,
         });
         let response = await this.$http.post(
-          `/api/admin/restaurant/${item.id}`
+          `/api/admin/restaurant/${item.requestId}/request`
         );
 
         store.dispatch("setLoading", {
@@ -171,9 +174,11 @@ export default {
           isShown: true,
           color: "success",
         });
+        console.log(item);
 
         this.removeApprovedRestaurant(item);
       } catch (err) {
+        console.log(err);
         store.dispatch("setLoading", {
           message: "Approving...",
           isShown: false,
@@ -186,9 +191,9 @@ export default {
       }
     },
     removeApprovedRestaurant(item) {
-      let index = this.restaurants.indexOf(item);
+      let index = this.data.indexOf(item);
       if (index > -1) {
-        this.restaurants.splice(index, 1);
+        this.data.splice(index, 1);
       }
     },
     display(item) {

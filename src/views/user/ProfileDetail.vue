@@ -71,7 +71,7 @@
                 <v-btn icon color="deep-orange" @click="onLikeBtnClicked(n)">
                   <v-icon
                     size="20"
-                    v-bind:color="n.likes.indexOf(authenticatedUser.username) === -1 ? '#838383' : '#3AB87B'"
+                    v-bind:color="authenticatedUser !== null && n.likes.indexOf(authenticatedUser.username) === -1 ? '#838383' : '#3AB87B'"
                   >mdi-thumb-up</v-icon>
                 </v-btn>
                 <span class="medium-text">{{ n.likes.length + " " }}Like</span>

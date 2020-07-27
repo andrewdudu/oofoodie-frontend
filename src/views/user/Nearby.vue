@@ -1,7 +1,12 @@
 <template>
   <div id="app">
     <Header />
-    <Map style="height: 100%;" v-bind:markers="restaurantMarkers" v-bind:circle="circle" />
+    <Map
+      class="height-full"
+      v-bind:centerMoveable="true"
+      v-bind:markers="restaurantMarkers"
+      v-bind:circle="circle"
+    />
     <Footer />
   </div>
 </template>
@@ -16,7 +21,7 @@ export default {
   components: {
     Map,
     Header,
-    Footer
+    Footer,
   },
   data() {
     return {
@@ -25,8 +30,8 @@ export default {
       markers: [
         [-6.93, 107.66],
         [-6.93, 107.6],
-        [-6.93, 107.602]
-      ]
+        [-6.93, 107.602],
+      ],
     };
   },
 
@@ -52,13 +57,13 @@ export default {
 
         this.restaurantMarkers = response.data.data;
 
-        this.restaurantMarkers.map(res => {
+        this.restaurantMarkers.map((res) => {
           res.marker = [res.location.lat, res.location.lon];
           return res;
         });
       } catch (err) {}
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -66,5 +71,9 @@ export default {
 #app {
   height: 100%;
   margin-bottom: 0;
+}
+
+.height-full {
+  height: 100%;
 }
 </style>

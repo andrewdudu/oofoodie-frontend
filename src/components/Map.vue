@@ -1,13 +1,7 @@
 <template>
   <div>
     <div v-if="loaded" class="map">
-      <l-map
-        :zoom="zoom"
-        :center="center"
-        @click="onClicked"
-        :bounds="markers"
-        :update:center="test"
-      >
+      <l-map :zoom="zoom" :center="center" @click="onClicked" :bounds="markers">
         <v-alert v-if="locationDisabled" dense border="left" type="warning" style="z-index:2000">
           Please allow your
           <strong>browser</strong> to access your
@@ -22,7 +16,7 @@
             <a :href="'/restaurant/' + restaurant.id">Visit</a>
           </v-popup>
         </l-marker>
-        <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+        <l-tile-layer :url="url"></l-tile-layer>
       </l-map>
     </div>
   </div>
@@ -45,7 +39,7 @@ delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png")
+  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
 
 export default {
@@ -58,14 +52,15 @@ export default {
       loaded: false,
       center: null,
       locationDisabled: false,
+      isClicked: false,
       circle: {
         center: null,
         radius: 6,
-        color: "blue"
-      }
+        color: "blue",
+      },
     };
   },
-  props: ["centerCoord", "markers", "isAddMarker"],
+  props: ["centerCoord", "markers", "isAddMarker", "centerMoveable"],
   mounted() {
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
@@ -75,7 +70,7 @@ export default {
         this.circle.center = [coords.latitude, coords.longitude];
         this.loaded = true;
       },
-      err => {
+      (err) => {
         if (!this.centerCoord) this.center = [-6.93, 107.668];
         else this.centerCoord = this.centerCoord;
         this.circle.center = [-6.93, 107.668];
@@ -86,13 +81,28 @@ export default {
   },
 
   methods: {
-    onClicked(e) {
+    async onClicked(e) {
       if (this.isAddMarker) {
         this.selectedMarker = [e.latlng.lat, e.latlng.lng];
         this.$emit("onAddMarker", e);
       }
-    }
-  }
+      if (this.centerMoveable) {
+        try {
+          this.circle.center = [e.latlng.lat, e.latlng.lng];
+
+          let response = await this.$http.get(
+            `/api/restaurant/nearby?lat=${e.latlng.lat}&lon=${e.latlng.lng}`
+          );
+
+          this.markers = response.data.data;
+          this.markers = this.markers.map((res) => {
+            res.marker = [res.location.lat, res.location.lon];
+            return res;
+          });
+        } catch (err) {}
+      }
+    },
+  },
 };
 </script>
 

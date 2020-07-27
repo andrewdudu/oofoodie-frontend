@@ -63,7 +63,7 @@ export default {
       password: null,
       confirmPassword: null,
       email: null,
-
+      name: null,
       usernameRules: [v => !!v || "Username is required"],
       emailRules: [
         v => !!v || "E-mail is required",

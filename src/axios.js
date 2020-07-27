@@ -11,7 +11,7 @@ ajax.interceptors.response.use(
   },
   (error) => {
     // if it isn't 401 then ignore
-    if (error.response.status !== 401) {
+    if (error.response.status !== 401 && error.response.status !== 403) {
       return new Promise((_resolve, reject) => {
         reject(error);
       });
@@ -27,10 +27,11 @@ ajax.interceptors.response.use(
     return new Promise((resolve, reject) => {
       axios
         .post("/auth/refresh")
-        .then((response) => {
-          // TODO: store isAuth
+        .then(() => {
           // re-request previous request after refreshed
-          return axios.request(error.config);
+          return axios.request(error.config).catch((err) => {
+            if (err.response.status === 403) router.push("/profile");
+          });
         })
         .then((response) => {
           resolve(response);

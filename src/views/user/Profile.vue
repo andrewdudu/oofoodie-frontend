@@ -1,6 +1,7 @@
 <template>
   <div class="main">
-    <Header />
+    <Header v-if="authenticatedUser === null" />
+    <Header v-if="authenticatedUser !== null" btn="Logout" @onBtnClicked="onLogout" />
     <v-dialog v-model="orderDialog" persistent>
       <v-card>
         <v-card-title>
@@ -93,7 +94,7 @@
           ></v-rating>
         </v-row>
         <v-row>
-          <span v-if="isAuthenticated" class="restaurant-description">32 Restaurant visits</span>
+          <span v-if="isAuthenticated" class="restaurant-description">{{ User.username }}</span>
         </v-row>
       </v-col>
     </v-row>
@@ -187,7 +188,13 @@
         </v-form>
       </v-tab-item>
       <v-tab-item value="timeline">
-        <v-timeline align-top dense>
+        <v-timeline
+          v-if="
+            authenticatedUser !== null && authenticatedUser.timelines !== null
+          "
+          align-top
+          dense
+        >
           <v-timeline-item v-for="n in authenticatedUser.timelines" :key="n" large color="#41e296">
             <template v-slot:icon>
               <v-icon color="#2A6B49">star</v-icon>
@@ -217,7 +224,11 @@
                   <v-btn icon color="deep-orange" @click="onLikeBtnClicked(n)">
                     <v-icon
                       size="20"
-                      v-bind:color="n.likes.indexOf(authenticatedUser.username) === -1 ? '#838383' : '#3AB87B'"
+                      v-bind:color="
+                        n.likes.indexOf(authenticatedUser.username) === -1
+                          ? '#838383'
+                          : '#3AB87B'
+                      "
                     >mdi-thumb-up</v-icon>
                   </v-btn>
                   <span class="medium-text">{{ n.likes.length + " " }}Like</span>
@@ -321,7 +332,7 @@ export default {
           "/api/img/" + response.restaurantResponse.image;
       });
       this.authenticatedUser.timelines.sort((a, b) =>
-        a.number > b.number ? 1 : -1
+        a.number < b.number ? 1 : -1
       );
     },
     setLoading(message, isShown) {
@@ -414,6 +425,19 @@ export default {
         this.setLoading("Signing up...", false);
         if (err.response.status === 400) message = err.response.data.message;
         this.showSnackbar(message, "error");
+      }
+    },
+    async onLogout() {
+      try {
+        this.setLoading("Loading...", true);
+        await this.$http.post("/auth/logout");
+
+        this.setLoading("", false);
+        this.showSnackbar("Success.", "success");
+        router.go("/profile");
+      } catch (err) {
+        this.setLoading("", false);
+        this.showSnackbar("Something went wrong, please try again.", "error");
       }
     },
   },

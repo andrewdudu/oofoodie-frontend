@@ -27,8 +27,7 @@ ajax.interceptors.response.use(
     return new Promise((resolve, reject) => {
       axios
         .post("/auth/refresh")
-        .then((response) => {
-          // TODO: store isAuth
+        .then(() => {
           // re-request previous request after refreshed
           return axios.request(error.config).catch((err) => {
             if (err.response.status === 403) router.push("/profile");

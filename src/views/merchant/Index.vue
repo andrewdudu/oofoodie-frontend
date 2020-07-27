@@ -3,16 +3,21 @@
     <v-app>
       <v-app-bar app dark elevation="0" style="background-color: #e5fbed">
         <v-app-bar-nav-icon color="#204732" @click.stop="sidebarMenu = !sidebarMenu"></v-app-bar-nav-icon>
+
+        <span
+          class="font-black"
+        >Credit : {{ authenticatedMerchant.credits !== null ? "Rp " + formatPrice(authenticatedMerchant.credits) : 0 }}</span>
         <v-spacer></v-spacer>
+        <v-btn @click="onTopupBtnClicked" color="success" class="mr-2">Topup Credit</v-btn>
         <v-btn @click="onLogout" color="#3ab87b" class="mr-2">Logout</v-btn>
       </v-app-bar>
+
       <v-navigation-drawer
         v-model="sidebarMenu"
         app
         floating
         style="background-color: #e5fbed;"
         :permanent="sidebarMenu"
-        :mini-variant.sync="mini"
       >
         <v-list dense dark>
           <v-list-item>
@@ -64,6 +69,7 @@ import { mapGetters } from "vuex";
 
 export default {
   data: () => ({
+    dialog: false,
     sidebarMenu: true,
     toggleMini: false,
     items: [],
@@ -71,21 +77,31 @@ export default {
       {
         title: "Restaurants",
         href: "/merchant/dashboard/restaurant",
-        icon: "mdi-food"
-      }
+        icon: "mdi-food",
+      },
     ],
     hasOwned: [
       {
         title: "Menu",
         href: "/merchant/dashboard/menu",
-        icon: "mdi-food"
+        icon: "mdi-food",
       },
       {
         title: "Orders",
         href: "/merchant/dashboard/orders",
-        icon: "mdi-food"
-      }
-    ]
+        icon: "mdi-order-bool-ascending",
+      },
+      {
+        title: "Promote",
+        href: "/merchant/dashboard/promote",
+        icon: "mdi-cash-multiple",
+      },
+      {
+        title: "Vouchers",
+        href: "/merchant/dashboard/voucher",
+        icon: "mdi-ticket-percent",
+      },
+    ],
   }),
 
   created() {
@@ -93,7 +109,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["isMerchantAuthenticated", "authenticatedMerchant"])
+    ...mapGetters(["isMerchantAuthenticated", "authenticatedMerchant"]),
   },
 
   methods: {
@@ -106,16 +122,23 @@ export default {
     setLoading(message, isShown) {
       store.dispatch("setLoading", {
         message,
-        isShown
+        isShown,
       });
     },
     showSnackbar(message, color) {
       store.dispatch("setSnackbar", {
         message,
         isShown: true,
-        color
+        color,
       });
     },
+    formatPrice(value) {
+      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+    onTopupBtnClicked() {
+      router.push("/merchant/dashboard/topup");
+    },
+    async topupCredit() {},
     async onLogout() {
       try {
         this.setLoading("Logging out...", true);
@@ -133,9 +156,13 @@ export default {
         this.showSnackbar("Something went wrong, try again later.", "error");
         this.setLoading("Logging out...", false);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.font-black {
+  color: black;
+}
+</style>

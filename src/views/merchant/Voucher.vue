@@ -2,14 +2,13 @@
   <v-container>
     <v-row>
       <v-col cols="1">
-        <v-btn color="primary" @click="addMenu" style="justify-content: flex-start">New Menu</v-btn>
+        <v-btn color="primary" @click="addVoucher" style="justify-content: flex-start">New Menu</v-btn>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="12">
         <v-data-table :headers="headers" :items="menus" :items-per-page="15" class="elevation-1">
           <template v-slot:item.actions="{ item }">
-            <v-btn small color="primary" @click="editItem(item)">Edit</v-btn>
             <v-btn small color="error" @click="deleteItem(item)" style="margin-left: 10px">Delete</v-btn>
           </template>
           <template v-slot:top>
@@ -23,10 +22,15 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="selectedMenu.name" label="Name"></v-text-field>
+                        <v-text-field v-model="name" :rules="nameRules" label="Name"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field type="number" v-model="selectedMenu.price" label="Price"></v-text-field>
+                        <v-file-input
+                          accept="image/*"
+                          label="Image"
+                          :rules="imageRules"
+                          @change="onImageChange"
+                        ></v-file-input>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -70,20 +74,22 @@ export default {
           sortable: false,
           value: "name",
         },
-        { text: "Price", value: "price" },
         { text: "Actions", value: "actions" },
       ],
       menus: [],
-      isEdit: false,
-      isCreate: false,
-      isDelete: false,
+      imageSize: 0,
       editedMenu: [],
-      selectedRestaurant: {},
+      name: "",
+      image: "",
+      imageRules: [
+        (v) => !!v || "Image is required",
+        () => this.imageSize < 2097152,
+      ],
+      nameRules: [(v) => !!v || "Name is required"],
       selectedMenu: {
         name: null,
         price: null,
       },
-      selectedMenuOriginal: null,
     };
   },
 
@@ -94,9 +100,7 @@ export default {
           message: "Loading...",
           isShown: true,
         });
-        let response = await this.$http.get(
-          `/api/menu/${this.authenticatedMerchant.restaurantOwner}`
-        );
+        let response = await this.$http.get(`/api/merchant/voucher`);
 
         store.dispatch("setLoading", {
           message: "Approving...",
@@ -110,6 +114,14 @@ export default {
           isShown: false,
         });
       }
+    },
+    onImageChange(file) {
+      let reader = new FileReader();
+      reader.readAsDataURL(file);
+      this.imageSize = file.size;
+      reader.onload = () => {
+        this.image = reader.result.substr(reader.result.indexOf(",") + 1);
+      };
     },
     setLoading(message, isShown) {
       store.dispatch("setLoading", {
@@ -126,113 +138,35 @@ export default {
     },
     close() {
       this.dialog = false;
-      this.isEdit = false;
-      this.isCreate = false;
-      this.isDelete = false;
     },
-    addMenu() {
-      this.selectedMenu = {
-        name: "",
-        price: 0,
-      };
-      this.dialog = true;
-      this.isCreate = true;
-    },
-    editItem(item) {
-      this.selectedMenu = {
-        name: item.name,
-        price: item.price,
-      };
-      this.selectedMenuOriginal = {
-        name: item.name,
-        price: item.price,
-      };
-      this.isEdit = true;
+    addVoucher() {
       this.dialog = true;
     },
     async deleteItem(item) {
       try {
-        this.selectedMenu = {
-          name: item.name,
-          price: item.price,
-        };
-        this.isDelete = true;
-        let index = this.menus.includes(this.selectedMenu);
-        if (index !== -1) {
-          this.editedMenu = this.menus.slice();
-          this.editedMenu.splice(index, 1);
-        }
-
         this.setLoading("Loading...", true);
 
-        await this.$http.post(
-          `/api/merchant/menu/${this.authenticatedMerchant.restaurantOwner}`,
-          {
-            menus: this.editedMenu,
-          }
-        );
-        this.menus = this.editedMenu;
-        this.isDelete = false;
+        await this.$http.delete(`/api/merchant/voucher/${item.id}`);
+
         this.setLoading("", false);
         this.showSnackbar("Success.", "success");
       } catch (err) {
-        this.editedMenu = this.menus;
-        this.isDelete = false;
         this.setLoading("", false);
         this.showSnackbar("Something went wrong, please try again.", "error");
       }
     },
-    async saveMenu(item) {
+    async saveMenu() {
       try {
-        if (this.isEdit) {
-          this.editedMenu = this.menus.map((menu) => {
-            if (
-              menu.name === this.selectedMenuOriginal.name &&
-              menu.price === this.selectedMenuOriginal.price
-            )
-              return {
-                name: this.selectedMenu.name,
-                price: parseFloat(this.selectedMenu.price),
-              };
-            return menu;
-          });
-        } else if (this.isCreate) {
-          this.editedMenu = this.menus.slice();
-          this.editedMenu.push({
-            name: this.selectedMenu.name,
-            price: parseInt(this.selectedMenu.price),
-          });
-        } else if (this.isDelete) {
-          let index = this.menus.includes(this.selectedMenu);
-          if (index !== -1) {
-            this.editedMenu = this.menus.slice();
-            this.editedMenu.splice(index, 1);
-          }
-        }
-
         this.setLoading("Loading...", true);
 
-        await this.$http.post(
-          `/api/merchant/menu/${this.authenticatedMerchant.restaurantOwner}`,
-          {
-            menus: this.editedMenu,
-          }
-        );
+        await this.$http.post("/api/merchant/voucher", {
+          name: this.name,
+          image: this.image,
+        });
 
-        this.menus = this.editedMenu;
-        this.isEdit = false;
-        this.isCreate = false;
-        this.isDelete = false;
         this.setLoading("", false);
         this.showSnackbar("Success.", "success");
-
-        this.dialog = false;
       } catch (err) {
-        this.editedMenu = this.menus;
-        this.dialog = false;
-        this.isEdit = false;
-        this.isCreate = false;
-        this.isDelete = false;
         this.setLoading("", false);
         this.showSnackbar("Something went wrong, please try again.", "error");
       }

@@ -15,15 +15,21 @@
       </div>
 
       <span class="voucher-title">Vouchers</span>
-      <hooper :infiniteScroll="true" :autoPlay="true" :playSpeed="3000">
-        <slide>
-          <img src="../../assets/voucher.jpg" />
-        </slide>
-        <slide>
-          <img src="../../assets/voucher.jpg" />
-        </slide>
-        <hooper-pagination slot="hooper-addons" />
-      </hooper>
+
+      <v-container>
+        <v-carousel height="210px">
+          <v-carousel-item
+            cycle
+            v-for="voucher in vouchers"
+            :to="`/restaurant/${voucher.restaurantId}`"
+            :key="voucher.name"
+            :src="'api/img/' + voucher.image"
+            reverse-transition="fade-transition"
+            transition="fade-transition"
+            show-arrows-on-hover
+          ></v-carousel-item>
+        </v-carousel>
+      </v-container>
 
       <span class="voucher-title">Popular Restaurants</span>
       <div class="horizontal-scroll">
@@ -39,7 +45,6 @@
 </template>
 
 <script>
-import { Hooper, Slide, Pagination as HooperPagination } from "hooper";
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import Card from "@/components/Card.vue";
@@ -50,53 +55,14 @@ export default {
   components: {
     Header,
     Footer,
-    Hooper,
-    Slide,
-    HooperPagination,
-    Card
+    Card,
   },
 
   data() {
     return {
       search: "",
       popularRestaurants: [],
-      datas: [
-        {
-          image:
-            "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
-          name: "The Magic of Nolem Gur The Magic of Nolem Gur",
-          rating: 4.9,
-          likes: 21
-        },
-        {
-          image:
-            "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
-          name: "The Magic of Nolem Gur",
-          rating: 4.9,
-          likes: 21
-        },
-        {
-          image:
-            "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
-          name: "The Magic of Nolem Gur",
-          rating: 4.9,
-          likes: 21
-        },
-        {
-          image:
-            "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
-          name: "The Magic of Nolem Gur",
-          rating: 4.9,
-          likes: 21
-        },
-        {
-          image:
-            "https://b.zmtcdn.com/data/pictures/6/18296336/4c1b3e6ebdbb119fd9325fe87916cb52.jpg?output-format=webp",
-          name: "The Magic of Nolem Gur",
-          rating: 4.9,
-          likes: 21
-        }
-      ]
+      vouchers: [],
     };
   },
 
@@ -111,8 +77,11 @@ export default {
     async initialize() {
       try {
         let response = await this.$http.get("/api/restaurant/popular");
+        let vouchers = await this.$http.get("/api/voucher");
 
-        this.popularRestaurants = response.data.data.map(restaurant => {
+        this.vouchers = vouchers.data.data;
+
+        this.popularRestaurants = response.data.data.map((restaurant) => {
           return {
             id: restaurant.id,
             image: `/api/img/${restaurant.image}`,
@@ -121,12 +90,12 @@ export default {
               restaurant.ratingStats !== null
                 ? restaurant.ratingStats.avgStar
                 : 0,
-            likes: restaurant.likes !== null ? restaurant.likes : 0
+            likes: restaurant.likes !== null ? restaurant.likes : 0,
           };
         });
       } catch (err) {}
-    }
-  }
+    },
+  },
 };
 </script>
 

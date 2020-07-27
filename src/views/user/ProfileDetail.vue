@@ -120,7 +120,6 @@ export default {
   methods: {
     async initialize() {
       try {
-        console.log(this.$route.params.username);
         let response = await this.$http.get(
           `/api/get-user/${this.$route.params.username}`
         );
@@ -137,6 +136,7 @@ export default {
           this.averageRating = (avgStar / this.user.timelines.length).toFixed(
             2
           );
+          this.user.timelines.sort((a, b) => (a.number < b.number ? 1 : -1));
         }
       } catch (err) {}
     },

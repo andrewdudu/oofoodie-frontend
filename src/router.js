@@ -35,6 +35,10 @@ const MerchantResetPasswordPage = () =>
 const MerchantRestaurantRequestPage = () =>
   import("@/views/merchant/Restaurant.vue");
 const MerchantMenuPage = () => import("@/views/merchant/Menu.vue");
+const MerchantOrdersPage = () => import("@/views/merchant/Orders.vue");
+const MerchantTopupPage = () => import("@/views/merchant/Topup.vue");
+const MerchantPromotePage = () => import("@/views/merchant/Promote.vue");
+const MerchantVoucherPage = () => import("@/views/merchant/Voucher.vue");
 
 export default new Router({
   mode: "history",
@@ -147,6 +151,10 @@ export default new Router({
       children: [
         { path: "restaurant", component: MerchantRestaurantRequestPage },
         { path: "menu", component: MerchantMenuPage },
+        { path: "orders", component: MerchantOrdersPage },
+        { path: "topup", component: MerchantTopupPage },
+        { path: "promote", component: MerchantPromotePage },
+        { path: "voucher", component: MerchantVoucherPage },
       ],
     },
   ],

@@ -97,7 +97,7 @@
     <img v-if="restaurant === null" class="not-found" src="@/assets/restaurant-not-found.svg" />
     <div v-if="restaurant !== null">
       <div class="image">
-        <img class="resto-image" :src="`/api/img/${restaurant.image}`" />
+        <img class="resto-image" :src="`http://128.199.110.11:8080/api/img/${restaurant.image}`" />
       </div>
       <v-container class="padding-top">
         <v-row>

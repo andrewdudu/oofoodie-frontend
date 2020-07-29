@@ -100,7 +100,6 @@
     </v-row>
 
     <v-tabs
-      v-model="tab"
       class="elevation-2"
       centered
       grow
@@ -329,7 +328,8 @@ export default {
       this.orders = response.data.data;
       this.orders.forEach((response) => {
         response.restaurantResponse.image =
-          "http://128.199.110.11:8080/api/img/" + response.restaurantResponse.image;
+          "http://128.199.110.11:8080/api/img/" +
+          response.restaurantResponse.image;
       });
       this.authenticatedUser.timelines.sort((a, b) =>
         a.number < b.number ? 1 : -1

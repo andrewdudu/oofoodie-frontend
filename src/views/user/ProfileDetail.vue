@@ -163,14 +163,14 @@ export default {
         );
 
         this.showSnackbar("Liked.", "success");
-        let index = timeline.likes.indexOf(this.user.username);
+        let index = timeline.likes.indexOf(this.authenticatedUser.username);
         if (index !== -1) {
           timeline.likes.splice(index, 1);
         } else {
           timeline.likes.push(this.user.username);
         }
       } catch (err) {
-        this.showSnackbar("Something went wrong, please try again.", "success");
+        this.showSnackbar("Something went wrong, please try again.", "error");
       }
     },
   },

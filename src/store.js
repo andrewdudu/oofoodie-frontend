@@ -10,7 +10,11 @@ export default new Vuex.Store({
       message: "Loading...",
       isShown: false,
     },
-    snackbar: null,
+    snackbar: {
+      color: "success",
+      isShown: false,
+      message: "",
+    },
     isAuthenticated: null,
     isAdminAuthenticated: null,
     isMerchantAuthenticated: null,

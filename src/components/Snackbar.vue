@@ -1,6 +1,6 @@
 <template>
-  <v-snackbar :color="Snackbar.color" v-model="Snackbar.isShown" class="snackbar" top>
-    {{ Snackbar.message }}
+  <v-snackbar :color="snackbar.color" v-model="snackbar.isShown" class="snackbar" top>
+    {{ snackbar.message }}
     <v-btn text @click="onCloseClicked">Close</v-btn>
   </v-snackbar>
 </template>
@@ -11,17 +11,14 @@ import { mapGetters } from "vuex";
 export default {
   computed: {
     ...mapGetters(["snackbar"]),
-    Snackbar() {
-      return this.snackbar;
-    }
   },
   methods: {
     onCloseClicked() {
       this.$store.dispatch("setSnackbar", {
-        isShown: false
+        isShown: false,
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

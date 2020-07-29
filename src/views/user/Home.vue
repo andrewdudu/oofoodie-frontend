@@ -84,7 +84,7 @@ export default {
         this.popularRestaurants = response.data.data.map((restaurant) => {
           return {
             id: restaurant.id,
-            image: `/api/img/${restaurant.image}`,
+            image: `http://128.199.110.11:8080/api/img/${restaurant.image}`,
             name: restaurant.name,
             rating:
               restaurant.ratingStats !== null

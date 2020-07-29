@@ -86,6 +86,7 @@ export default {
             id: restaurant.id,
             image: `http://128.199.110.11:8080/api/img/${restaurant.image}`,
             name: restaurant.name,
+            ratingStats: restaurant.ratingStats,
             rating:
               restaurant.ratingStats !== null
                 ? restaurant.ratingStats.avgStar

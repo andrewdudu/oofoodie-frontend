@@ -23,7 +23,7 @@
             v-for="voucher in vouchers"
             :to="`/restaurant/${voucher.restaurantId}`"
             :key="voucher.name"
-            :src="'api/img/' + voucher.image"
+            :src="'http://128.199.110.11:8080/api/img/' + voucher.image"
             reverse-transition="fade-transition"
             transition="fade-transition"
             show-arrows-on-hover

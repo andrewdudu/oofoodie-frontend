@@ -2,7 +2,8 @@
   <v-data-table :headers="headers" :items="restaurants" :items-per-page="15" class="elevation-1">
     <template v-slot:item.actions="{ item }">
       <v-icon small class="mr-2" @click="display(item)">mdi-eye</v-icon>
-      <v-btn small color="primary" @click="approve(item)">Approve</v-btn>
+      <v-btn small color="error" @click="decline(item)">Decline</v-btn>
+      <v-btn small class="margin-left" color="primary" @click="approve(item)">Approve</v-btn>
     </template>
     <template v-slot:top>
       <v-dialog v-model="dialog" max-width="500px">
@@ -36,7 +37,10 @@
               <v-row>
                 <v-col cols="4" class="left">Image :</v-col>
                 <v-col cols="8" class="right">
-                  <img :src="`/api/img/${selectedRestaurant.image}`" style="width: 100%" />
+                  <img
+                    :src="`http://128.199.110.11:8080/api/img/${selectedRestaurant.image}`"
+                    style="width: 100%"
+                  />
                 </v-col>
               </v-row>
               <v-row>
@@ -80,16 +84,16 @@ export default {
           text: "Name",
           align: "start",
           sortable: false,
-          value: "name"
+          value: "name",
         },
         { text: "Telephone", value: "telephone" },
         { text: "Address", value: "address" },
         { text: "Type", value: "type" },
         { text: "Cuisine", value: "cuisine" },
-        { text: "Actions", value: "actions" }
+        { text: "Actions", value: "actions" },
       ],
       restaurants: [],
-      selectedRestaurant: {}
+      selectedRestaurant: {},
     };
   },
 
@@ -98,19 +102,19 @@ export default {
       try {
         store.dispatch("setLoading", {
           message: "Loading...",
-          isShown: true
+          isShown: true,
         });
         let response = await this.$http.get("/api/admin/restaurant");
 
         store.dispatch("setLoading", {
           message: "Approving...",
-          isShown: false
+          isShown: false,
         });
         this.restaurants = response.data.data;
       } catch (err) {
         store.dispatch("setLoading", {
           message: "Approving...",
-          isShown: false
+          isShown: false,
         });
       }
     },
@@ -122,11 +126,45 @@ export default {
       timeString = h + timeString.substr(2, 3) + ampm;
       return timeString;
     },
+    async decline(item) {
+      try {
+        store.dispatch("setLoading", {
+          message: "Loading...",
+          isShown: true,
+        });
+        console.log(item);
+        let response = await this.$http.delete(
+          `/api/admin/restaurant/${item.id}`
+        );
+
+        store.dispatch("setLoading", {
+          message: "Loading",
+          isShown: false,
+        });
+        store.dispatch("setSnackbar", {
+          message: "Declined.",
+          isShown: true,
+          color: "success",
+        });
+
+        this.removeApprovedRestaurant(item);
+      } catch (err) {
+        store.dispatch("setLoading", {
+          message: "",
+          isShown: false,
+        });
+        store.dispatch("setSnackbar", {
+          message: "Something went wrong, try again later.",
+          isShown: true,
+          color: "error",
+        });
+      }
+    },
     async approve(item) {
       try {
         store.dispatch("setLoading", {
           message: "Approving...",
-          isShown: true
+          isShown: true,
         });
         let response = await this.$http.post(
           `/api/admin/restaurant/${item.id}`
@@ -134,24 +172,24 @@ export default {
 
         store.dispatch("setLoading", {
           message: "Approving...",
-          isShown: false
+          isShown: false,
         });
         store.dispatch("setSnackbar", {
           message: "Approved.",
           isShown: true,
-          color: "success"
+          color: "success",
         });
 
         this.removeApprovedRestaurant(item);
       } catch (err) {
         store.dispatch("setLoading", {
           message: "Approving...",
-          isShown: false
+          isShown: false,
         });
         store.dispatch("setSnackbar", {
           message: "Something went wrong, try again later.",
           isShown: true,
-          color: "error"
+          color: "error",
         });
       }
     },
@@ -172,10 +210,10 @@ export default {
         type: item.type,
         cuisine: item.cuisine,
         image: item.image,
-        openHour: item.openHour
+        openHour: item.openHour,
       };
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -184,8 +222,13 @@ export default {
   display: flex;
   justify-content: flex-start;
 }
+
 .left {
   display: flex;
   justify-content: flex-end;
+}
+
+.margin-left {
+  margin-left: 10px;
 }
 </style>

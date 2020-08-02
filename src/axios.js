@@ -30,7 +30,10 @@ ajax.interceptors.response.use(
         .then(() => {
           // re-request previous request after refreshed
           return axios.request(error.config).catch((err) => {
-            if (err.response.status === 403) router.push("/profile");
+            if (err.response.status === 403) {
+              router.push("/profile");
+              reject(err);
+            }
           });
         })
         .then((response) => {

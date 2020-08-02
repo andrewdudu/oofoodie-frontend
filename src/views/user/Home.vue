@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="app">
     <Header />
     <div class="home">
       <div class="search-input">
@@ -23,7 +23,7 @@
             v-for="voucher in vouchers"
             :to="`/restaurant/${voucher.restaurantId}`"
             :key="voucher.name"
-            :src="'api/img/' + voucher.image"
+            :src="'http://128.199.110.11:8080/api/img/' + voucher.image"
             reverse-transition="fade-transition"
             transition="fade-transition"
             show-arrows-on-hover
@@ -49,9 +49,10 @@ import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import Card from "@/components/Card.vue";
 import router from "@/router.js";
-import "hooper/dist/hooper.css";
 
 export default {
+  name: "main",
+
   components: {
     Header,
     Footer,
@@ -84,8 +85,9 @@ export default {
         this.popularRestaurants = response.data.data.map((restaurant) => {
           return {
             id: restaurant.id,
-            image: `/api/img/${restaurant.image}`,
+            image: `http://128.199.110.11:8080/api/img/${restaurant.image}`,
             name: restaurant.name,
+            ratingStats: restaurant.ratingStats,
             rating:
               restaurant.ratingStats !== null
                 ? restaurant.ratingStats.avgStar
@@ -102,6 +104,13 @@ export default {
 <style lang="scss" scoped>
 $font: "Century Gothic";
 $title_size: 12px;
+
+#app {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
 
 .margin-left {
   margin-left: 10px;

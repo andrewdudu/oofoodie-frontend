@@ -71,7 +71,7 @@
                 <v-btn icon color="deep-orange" @click="onLikeBtnClicked(n)">
                   <v-icon
                     size="20"
-                    v-bind:color="n.likes.indexOf(authenticatedUser.username) === -1 ? '#838383' : '#3AB87B'"
+                    v-bind:color="authenticatedUser !== null && n.likes.indexOf(authenticatedUser.username) === -1 ? '#838383' : '#3AB87B'"
                   >mdi-thumb-up</v-icon>
                 </v-btn>
                 <span class="medium-text">{{ n.likes.length + " " }}Like</span>
@@ -163,14 +163,14 @@ export default {
         );
 
         this.showSnackbar("Liked.", "success");
-        let index = timeline.likes.indexOf(this.user.username);
+        let index = timeline.likes.indexOf(this.authenticatedUser.username);
         if (index !== -1) {
           timeline.likes.splice(index, 1);
         } else {
           timeline.likes.push(this.user.username);
         }
       } catch (err) {
-        this.showSnackbar("Something went wrong, please try again.", "success");
+        this.showSnackbar("Something went wrong, please try again.", "error");
       }
     },
   },

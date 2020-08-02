@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div id="app" class="main">
     <Header v-if="authenticatedUser === null" />
     <Header v-if="authenticatedUser !== null" btn="Logout" @onBtnClicked="onLogout" />
     <v-dialog v-model="orderDialog" persistent>
@@ -100,7 +100,6 @@
     </v-row>
 
     <v-tabs
-      v-model="tab"
       class="elevation-2"
       centered
       grow
@@ -309,9 +308,9 @@ export default {
           this.authenticatedUser.timelines.forEach((timeline) => {
             if (timeline.type === "review") {
               avgStar += timeline.star;
-              this.reviewCount++;
             }
           });
+          this.reviewCount = this.authenticatedUser.timelines.length;
           this.averageRating = (
             avgStar / this.authenticatedUser.timelines.length
           ).toFixed(2);
@@ -329,7 +328,8 @@ export default {
       this.orders = response.data.data;
       this.orders.forEach((response) => {
         response.restaurantResponse.image =
-          "/api/img/" + response.restaurantResponse.image;
+          "http://128.199.110.11:8080/api/img/" +
+          response.restaurantResponse.image;
       });
       this.authenticatedUser.timelines.sort((a, b) =>
         a.number < b.number ? 1 : -1
@@ -446,6 +446,13 @@ export default {
 
 <style lang="scss" scoped>
 $font: "Century Gothic";
+
+#app {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
 
 .main {
   margin-bottom: 50px;

@@ -1,10 +1,9 @@
 <template>
-  <div>
+  <div id="app">
     <Header />
     <v-container>
-      <v-autocomplete
-        :search-input.sync="search"
-        :onChange="debounceInput()"
+      <v-text-field
+        v-model="search"
         color="grey"
         hide-no-data
         hide-selected
@@ -13,17 +12,13 @@
         placeholder="Start typing to Search"
         prepend-icon="search"
         return-object
-      ></v-autocomplete>
+      ></v-text-field>
       <v-row v-for="restaurant in restaurants" :key="restaurant.id">
         <router-link :to="`/restaurant/${restaurant.id}`" style="text-decoration: none">
           <card v-bind:data="restaurant"></card>
         </router-link>
       </v-row>
-      <img
-        v-if="restaurants.length === 0"
-        src="@/assets/empty.svg"
-        style="width: 100%; padding: 30px;margin-top: 50px;"
-      />
+      <img v-if="restaurants.length === 0" class="img-class" src="@/assets/empty.svg" />
     </v-container>
     <Footer />
   </div>
@@ -52,36 +47,57 @@ export default {
     };
   },
 
+  watch: {
+    search(val) {
+      if (!val) return;
+
+      this.debounceInput();
+    },
+  },
+
   methods: {
     async onChange() {
-      if (this.query !== null) this.search = this.query;
       try {
-        if (this.search !== null && this.search !== "") {
+        if (this.search !== "") {
           let response = await this.$http.get(
             `/api/restaurant/search?q=${this.search}`
           );
 
           response.data.data.map((resto) => {
-            resto.image = `http://128.199.110.11:8080/api/img/${resto.image}`;
+            resto.image = `http://128.199.110.11/api/img/${resto.image}`;
             return resto;
           });
 
           this.restaurants = _.cloneDeep(response.data.data);
-          this.search = null;
-          this.query = null;
         }
       } catch (err) {}
     },
+    debounceInput: _.debounce(function () {
+      this.onChange();
+    }, 500),
   },
 
   created() {
-    this.debounceInput = _.debounce(this.onChange, 500);
+    this.search = this.query;
   },
 };
 </script>
 
 <style lang="scss" scoped>
+#app {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
 .row {
   margin: 10px 0px 10px 0px;
+}
+
+.img-class {
+  width: 100%;
+  padding: 30px;
+  margin-top: 50px;
 }
 </style>

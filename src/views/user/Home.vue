@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="app">
     <Header />
     <div class="home">
       <div class="search-input">
@@ -49,9 +49,10 @@ import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import Card from "@/components/Card.vue";
 import router from "@/router.js";
-import "hooper/dist/hooper.css";
 
 export default {
+  name: "main",
+
   components: {
     Header,
     Footer,
@@ -103,6 +104,13 @@ export default {
 <style lang="scss" scoped>
 $font: "Century Gothic";
 $title_size: 12px;
+
+#app {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
 
 .margin-left {
   margin-left: 10px;

@@ -17,23 +17,23 @@ import { mapActions } from "vuex";
 export default {
   data() {
     return {
-      isRefreshed: false
+      isRefreshed: false,
     };
   },
   components: {
     Header,
     Footer,
     Loading,
-    Snackbar
+    Snackbar,
   },
   created() {
     this.getAuthenticated()
-      .then(res => (this.isRefreshed = true))
-      .catch(err => (this.isRefreshed = true));
+      .then((res) => (this.isRefreshed = true))
+      .catch((err) => (this.isRefreshed = true));
   },
   methods: {
-    ...mapActions(["getAuthenticated"])
-  }
+    ...mapActions(["getAuthenticated"]),
+  },
 };
 </script>
 

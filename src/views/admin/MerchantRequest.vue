@@ -2,7 +2,8 @@
   <v-data-table :headers="headers" :items="data" :items-per-page="15" class="elevation-1">
     <template v-slot:item.actions="{ item }">
       <v-icon small class="mr-2" @click="display(item)">mdi-eye</v-icon>
-      <v-btn small color="primary" @click="approve(item)">Approve</v-btn>
+      <v-btn small color="error" @click="decline(item)">Decline</v-btn>
+      <v-btn small class="margin-left" color="primary" @click="approve(item)">Approve</v-btn>
     </template>
     <template v-slot:top>
       <v-dialog v-model="dialog" max-width="500px">
@@ -155,6 +156,39 @@ export default {
       timeString = h + timeString.substr(2, 3) + ampm;
       return timeString;
     },
+    async decline(item) {
+      try {
+        store.dispatch("setLoading", {
+          message: "Approving...",
+          isShown: true,
+        });
+        let response = await this.$http.delete(
+          `/api/admin/restaurant/${item.requestId}/request`
+        );
+
+        store.dispatch("setLoading", {
+          message: "",
+          isShown: false,
+        });
+        store.dispatch("setSnackbar", {
+          message: "Declined.",
+          isShown: true,
+          color: "success",
+        });
+
+        this.removeApprovedRestaurant(item);
+      } catch (err) {
+        store.dispatch("setLoading", {
+          message: "Approving...",
+          isShown: false,
+        });
+        store.dispatch("setSnackbar", {
+          message: "Something went wrong, try again later.",
+          isShown: true,
+          color: "error",
+        });
+      }
+    },
     async approve(item) {
       try {
         store.dispatch("setLoading", {
@@ -174,11 +208,9 @@ export default {
           isShown: true,
           color: "success",
         });
-        console.log(item);
 
         this.removeApprovedRestaurant(item);
       } catch (err) {
-        console.log(err);
         store.dispatch("setLoading", {
           message: "Approving...",
           isShown: false,
@@ -221,8 +253,13 @@ export default {
   display: flex;
   justify-content: flex-start;
 }
+
 .left {
   display: flex;
   justify-content: flex-end;
+}
+
+.margin-left {
+  margin-left: 10px;
 }
 </style>

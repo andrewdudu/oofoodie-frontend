@@ -1,6 +1,7 @@
 <template>
-  <div class="margin-bottom">
-    <Header btn="Order" @onBtnClicked="onOrder" />
+  <div id="app" class="margin-bottom">
+    <Header v-if="restaurant.menus !== null" btn="Order" @onBtnClicked="onOrder" />
+    <Header v-else />
     <v-dialog v-model="dialog" persistent>
       <v-card>
         <v-card-title>
@@ -725,6 +726,13 @@ $four-star-color: #3ab87b;
 $three-star-color: #339162;
 $two-star-color: #2a6b49;
 $one-star-color: #204732;
+
+#app {
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
 
 .btn-icon-div {
   display: flex;

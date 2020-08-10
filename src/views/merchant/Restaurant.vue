@@ -62,10 +62,7 @@
               <v-row>
                 <v-col cols="4" class="left">Image :</v-col>
                 <v-col cols="8" class="right">
-                  <img
-                    :src="`http://128.199.110.11:8080/api/img/${selectedRestaurant.image}`"
-                    style="width: 100%"
-                  />
+                  <img :src="`/api/img/${selectedRestaurant.image}`" style="width: 100%" />
                 </v-col>
               </v-row>
               <v-row>

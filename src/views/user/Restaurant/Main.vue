@@ -98,7 +98,7 @@
     <img v-if="restaurant === null" class="not-found" src="@/assets/restaurant-not-found.svg" />
     <div v-if="restaurant !== null">
       <div class="image">
-        <img class="resto-image" :src="`http://128.199.110.11:8080/api/img/${restaurant.image}`" />
+        <img class="resto-image" :src="`/api/img/${restaurant.image}`" />
       </div>
       <v-container class="padding-top">
         <v-row>
@@ -347,7 +347,12 @@
 
         <v-divider class="divider" />
 
-        <div v-for="review in reviews" :key="review.reviewId">
+        <router-link
+          v-for="review in reviews"
+          :key="review.reviewId"
+          tag="div"
+          :to="`/profile/${review.user}`"
+        >
           <v-row>
             <v-col cols="8">
               <v-row>
@@ -383,7 +388,7 @@
           </v-row>
 
           <v-divider class="divider" />
-        </div>
+        </router-link>
       </v-container>
     </div>
     <Footer />

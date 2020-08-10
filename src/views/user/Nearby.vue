@@ -69,7 +69,7 @@ export default {
 
 <style lang="scss" scoped>
 #app {
-  height: 100%;
+  height: 90%;
   margin-bottom: 0;
 }
 

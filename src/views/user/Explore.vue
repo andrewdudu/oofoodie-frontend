@@ -64,7 +64,7 @@ export default {
           );
 
           response.data.data.map((resto) => {
-            resto.image = `http://128.199.110.11/api/img/${resto.image}`;
+            resto.image = `/api/img/${resto.image}`;
             return resto;
           });
 
@@ -88,6 +88,7 @@ export default {
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 50px;
   width: 100%;
 }
 

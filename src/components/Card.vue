@@ -24,12 +24,12 @@ import StarBox from "@/components/StarBox.vue";
 export default {
   name: "Card",
   components: {
-    StarBox
+    StarBox,
   },
   props: ["data"],
   data() {
     return this.data;
-  }
+  },
 };
 </script>
 
@@ -88,5 +88,6 @@ $title_size: 12px;
 img {
   border-radius: 5px;
   width: 100%;
+  height: 180px;
 }
 </style>

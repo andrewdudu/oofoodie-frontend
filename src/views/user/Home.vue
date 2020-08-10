@@ -22,8 +22,8 @@
             cycle
             v-for="voucher in vouchers"
             :to="`/restaurant/${voucher.restaurantId}`"
-            :key="voucher.name"
-            :src="'http://128.199.110.11:8080/api/img/' + voucher.image"
+            :key="voucher.id"
+            :src="'api/img/' + voucher.image"
             reverse-transition="fade-transition"
             transition="fade-transition"
             show-arrows-on-hover
@@ -34,8 +34,14 @@
       <span class="voucher-title">Popular Restaurants</span>
       <div class="horizontal-scroll">
         <div v-bind:key="index" v-for="(data, index) in popularRestaurants">
-          <router-link :to="`/restaurant/${data.id}`" style="text-decoration: none">
-            <card :class="index === 0 ? '' : 'margin-left'" v-bind:data="data" />
+          <router-link
+            :to="`/restaurant/${data.id}`"
+            style="text-decoration: none"
+          >
+            <card
+              :class="index === 0 ? '' : 'margin-left'"
+              v-bind:data="data"
+            />
           </router-link>
         </div>
       </div>
@@ -48,10 +54,9 @@
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import Card from "@/components/Card.vue";
-import router from "@/router.js";
 
 export default {
-  name: "main",
+  name: "home-page",
 
   components: {
     Header,
@@ -73,7 +78,7 @@ export default {
 
   methods: {
     onSubmitSearch() {
-      router.push({ path: "explore", query: { q: this.search } });
+      this.$router.push({ path: "explore", query: { q: this.search } });
     },
     async initialize() {
       try {
@@ -85,7 +90,7 @@ export default {
         this.popularRestaurants = response.data.data.map((restaurant) => {
           return {
             id: restaurant.id,
-            image: `http://128.199.110.11:8080/api/img/${restaurant.image}`,
+            image: `api/img/${restaurant.image}`,
             name: restaurant.name,
             ratingStats: restaurant.ratingStats,
             rating:

@@ -8,7 +8,6 @@ import vuetify from "@/plugins/vuetify";
 import "./registerServiceWorker";
 
 Vue.use(VueAxios, axios);
-Vue.axios.defaults.baseURL = `http://128.199.110.11:8080/`;
 Vue.config.productionTip = false;
 
 new Vue({
